@@ -20,15 +20,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// //Route importings
-// const product = require("./routes/productsRoutes");
-// const order = require("./routes/orderRoutes");
-// const user = require("./routes/userRoutes");
-// const payment = require("./routes/paymentRoutes")
-// app.use("/api/v1", product)
-// app.use("/api/v1", order)
-// app.use("/api/v1", user)
-// app.use("/api/v1", payment)
+//Route importings
+app.use('/api', require('./routes/authRouter'))
 
 //middleware for error
 app.get("/", (req, res) => {
