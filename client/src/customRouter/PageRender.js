@@ -18,7 +18,6 @@ const PageRender = () => {
     const { page, id } = useParams()
     // const { auth } = useSelector(state => state)
 
-    console.log(page,id)
     let pageName = "";
 
     // if (auth.token) {
