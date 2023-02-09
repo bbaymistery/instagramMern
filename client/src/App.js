@@ -12,12 +12,7 @@ const App = () => {
   const { auth, } = useSelector(state => state)
 
   useEffect(() => {
-    // biz ligin edennen sonra home page yonelirik 
-    //Yalniz home page de refresh ederken yeniden logine yonelir
-    //onun garsisin almag ucun refresh token kullanirik
     dispatch(refreshToken())
-
-
   }, [dispatch])
   return (
     <Router>
@@ -25,15 +20,10 @@ const App = () => {
       <input type="checkbox" id="theme" />
       <div className="App">
         <h1 className="main">
-
           <Route exact path="/" component={auth?.token ? Home : Login} />
           <Route path="/:page" component={PageRender} />
           <Route path="/:page/:id" component={PageRender} />
         </h1>
-        <div style={{ color: "red" }}>red</div>
-        <div style={{ color: "green" }}>green</div>
-        <div style={{ color: "blue" }}>blue</div>
-        <div style={{ color: "cyan" }}>cyan</div>
       </div>
     </Router>
   )
