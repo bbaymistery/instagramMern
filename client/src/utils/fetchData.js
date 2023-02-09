@@ -12,14 +12,21 @@ export const getDataAPI = async (url, token) => {
             const response = await fetch(url, { method, body, headers });
             const datas = await response.json();
 */
-export const postDataAPI = async (url, data, token="") => {
+export const postDataAPI = async (url, data = "", token = "") => {
     const method = "POST"
     const baseUrl = `api/${url}`;
-    const body = JSON.stringify(data)
-    const headers = {  "Content-Type": "application/json" ,"Authorization": token}
-    const response = await fetch(baseUrl, { method, body, headers });
-    const datas = await response.json();
-    return datas;
+    const headers = { "Content-Type": "application/json", "Authorization": token }
+
+    if (data.length > 0) {
+        const body = JSON.stringify(data)
+        const response = await fetch(baseUrl, { method, body, headers });
+        const datas = await response.json();
+        return datas;
+    } else {
+        const response = await fetch(baseUrl, { method, headers });
+        const datas = await response.json();
+        return datas;
+    }
 }
 
 export const putDataAPI = async (url, post, token) => {

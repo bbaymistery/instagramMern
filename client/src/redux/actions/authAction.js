@@ -1,5 +1,5 @@
 import { GLOBALTYPES } from './globalTypes'
-import { postDataAPI } from '../../utils/fetchData'
+import { getDataAPI, postDataAPI } from '../../utils/fetchData'
 
 export const login = (data) => async (dispatch) => {
     try {
@@ -7,7 +7,6 @@ export const login = (data) => async (dispatch) => {
 
             dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } })
             const datas = await postDataAPI('login', data)
-            console.log(datas, "logindatas");
             dispatch({ type: GLOBALTYPES.AUTH, payload: { token: datas.access_token, user: datas.user } })
 
             localStorage.setItem("firstLogin", true)
@@ -20,6 +19,22 @@ export const login = (data) => async (dispatch) => {
 }
 
 
+export const refreshToken = () => async (dispatch) => {
+    const firstLogin = localStorage.getItem("firstLogin")
+    if (firstLogin) {
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } })
 
+        try {
+            const res = await postDataAPI('refresh_token')
+            console.log({refreshToken:res});
+
+            dispatch({ type: GLOBALTYPES.AUTH, payload: { token: res?.access_token, user: res?.user } })
+            dispatch({ type: GLOBALTYPES.ALERT, payload: {} })
+
+        } catch (err) {
+            dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err?.response?.msg } })
+        }
+    }
+}
 
 

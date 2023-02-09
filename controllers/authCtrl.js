@@ -94,7 +94,6 @@ const authCtrl = {
             //!diger tutorillarda vrify olan bolumu middleware(protect) kimi kullanilirdi
             const rf_token = req.cookies.refreshtoken
             if (!rf_token) return res.status(400).json({ msg: "Please login now." })
-            console.log(rf_token, "rtoken");
 
             jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, async (err, result) => {
                 if (err) return res.status(400).json({ msg: "Please login now." })
