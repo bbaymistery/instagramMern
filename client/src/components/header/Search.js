@@ -23,6 +23,8 @@ const Search = () => {
             setLoad(true)
             const res = await getDataAPI(`search?username=${search}`, auth.token)
             // req.query.username     seklinde backenden alrq
+            // console.log({ token: auth.token });
+
 
             setUsers(res.data.users)
             setLoad(false)

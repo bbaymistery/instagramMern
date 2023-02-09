@@ -39,7 +39,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                 {user.following.length} Following
                             </span>
                         </div>
-                        <h6 >{user.fullname} <span  className={`${theme ? 'text-success' : 'text-danger'}`}>{user.mobile}</span></h6>
+                        <h6 >{user.fullname} <span className={`${theme ? 'text-success' : 'text-danger'}`}>{user.mobile}</span></h6>
                         <p style={{ fontSize: "13px" }} className="m-0">{user.address} Qurtulus 93</p>
                         <h6 style={{ fontSize: "13px" }} className="m-0">{user.email}</h6>
                         <a style={{ fontSize: "13px" }} href={`https://www.${user.website}`} target="_blank" rel="noreferrer">
