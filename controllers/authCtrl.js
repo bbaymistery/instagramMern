@@ -1,7 +1,7 @@
 const Users = require('../models/userModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-//al of them is post request
+//!all of them is post request
 const authCtrl = {
     register: async (req, res) => {
         try {
@@ -34,24 +34,20 @@ const authCtrl = {
             //!yuxardaki adresde refreshtoken goruner
             await newUser.save()
 
-            res.json({
-                msg: 'Register Success!',
-                access_token,
-                user: { ...newUser._doc, password: '' },
-
-                withoutDoc: { ...newUser }
-            })
+            res.json({ msg: 'Register Success!', access_token, user: { ...newUser._doc, password: '' } })
         } catch (err) {
-            console.log(err)
             return res.status(500).json({ msg: err.message })
         }
     },
+
     login: async (req, res) => {
         try {
             const { email, password } = req.body
 
             const user = await Users.findOne({ email })
                 .populate("followers following", "avatar username fullname followers following")
+
+
 
             if (!user) return res.status(400).json({ msg: "This email does not exist." })
 
@@ -89,6 +85,7 @@ const authCtrl = {
     },
 
     //api/refresh_token'
+
     generateAccessToken: async (req, res) => {
         try {
             //!diger tutorillarda vrify olan bolumu middleware(protect) kimi kullanilirdi

@@ -1,7 +1,18 @@
 import axios from 'axios'
 
 export const getDataAPI = async (url, token) => {
-    const res = await axios.get(`/api/${url}`,)
+    //   if(token){
+    //       const res = await axios.get(`/api/${url}`, {
+    //           headers: { Authorization: token }
+    //       })
+    //       return res;
+    //   }else{
+    //       const res = await axios.get(`/api/${url}`, )
+    //       return res;
+    //   }
+    const res = await axios.get(`/api/${url}`, {
+        headers: { Authorization: token }
+    })
     return res;
 }
 /*
@@ -12,7 +23,7 @@ export const getDataAPI = async (url, token) => {
             const response = await fetch(url, { method, body, headers });
             const datas = await response.json();
 */
-export const postDataAPI = async (url, data , token = "") => {
+export const postDataAPI = async (url, data, token = "") => {
     const method = "POST"
     const baseUrl = `api/${url}`;
     const headers = { "Content-Type": "application/json", "Authorization": token }

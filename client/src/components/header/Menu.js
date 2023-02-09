@@ -45,7 +45,7 @@ const Menu = () => {
 
 
                 <li className="nav-item dropdown" style={{ opacity: 1 }} >
-                    <span className="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span style={{ marginBottom: "10px" }} className="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <Avatar src={auth.user.avatar} size="medium-avatar" />
                     </span>
 

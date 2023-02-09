@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Menu from './Menu'
+import Search from './Search'
 
 const Header = () => {
 
@@ -13,6 +14,7 @@ const Header = () => {
                         V-Social
                     </h1>
                 </Link>
+                <Search />
                 <Menu />
             </nav>
         </div>

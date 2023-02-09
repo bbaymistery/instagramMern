@@ -10,4 +10,5 @@ router.post('/logout', authCtrl.logout)
 router.post('/refresh_token', authCtrl.generateAccessToken)
 
 
+
 module.exports = router
