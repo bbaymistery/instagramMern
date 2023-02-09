@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import Avatar from '../Avatar'
 import FollowBtn from '../FollowBtn'
 import EditProfile from './EditProfile'
 
 const Info = ({ id, auth, profile, dispatch }) => {
     const [userData, setUserData] = useState([])
+    const { theme } = useSelector(state => state)
     const [onEdit, setOnEdit] = useState(false)
     useEffect(() => {
         if (id === auth.user._id) {
@@ -14,8 +16,7 @@ const Info = ({ id, auth, profile, dispatch }) => {
             setUserData(newData)
         }
     }, [id, auth, dispatch, profile.users])
-    console.log(userData, "USERdata");
-    console.log(auth, "auth");
+
 
 
     return (
@@ -38,11 +39,10 @@ const Info = ({ id, auth, profile, dispatch }) => {
                                 {user.following.length} Following
                             </span>
                         </div>
-
-                        <h6 >{user.fullname} <span className="text-danger">{user.mobile}</span></h6>
+                        <h6 >{user.fullname} <span  className={`${theme ? 'text-success' : 'text-danger'}`}>{user.mobile}</span></h6>
                         <p style={{ fontSize: "13px" }} className="m-0">{user.address} Qurtulus 93</p>
                         <h6 style={{ fontSize: "13px" }} className="m-0">{user.email}</h6>
-                        <a style={{ fontSize: "13px" }} href={user.website} target="_blank" rel="noreferrer">
+                        <a style={{ fontSize: "13px" }} href={`https://www.${user.website}`} target="_blank" rel="noreferrer">
                             {user.website}
                         </a>
                         <p style={{ fontSize: "11px" }}>{user.story} </p>
