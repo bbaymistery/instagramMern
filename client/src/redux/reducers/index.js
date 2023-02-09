@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import auth from './authReducer'
 import alert from './alertReducer'
-// import theme from './themeReducer'
+import theme from './themeReducer'
 // import profile from './profileReducer'
 // import status from './statusReducer'
 // import homePosts from './postReducer'
@@ -20,7 +20,7 @@ import alert from './alertReducer'
 export default combineReducers({
     auth,
     alert,
-    // theme,
+    theme,
     // profile,
     // status,
     // homePosts,

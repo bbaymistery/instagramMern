@@ -5,10 +5,8 @@ import valid from '../../utils/valid'
 export const login = (data) => async (dispatch) => {
     try {
         if (data) {
-
             dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } })
             const datas = await postDataAPI('login', data)
-
             if (datas?.access_token) {
                 dispatch({ type: GLOBALTYPES.AUTH, payload: { token: datas.access_token, user: datas.user } })
                 localStorage.setItem("firstLogin", true)
@@ -30,7 +28,6 @@ export const refreshToken = () => async (dispatch) => {
             const res = await postDataAPI('refresh_token')
             dispatch({ type: GLOBALTYPES.AUTH, payload: { token: res?.access_token, user: res?.user } })
             dispatch({ type: GLOBALTYPES.ALERT, payload: {} })
-
         } catch (err) {
             dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err?.response?.msg } })
         }
@@ -40,8 +37,6 @@ export const refreshToken = () => async (dispatch) => {
 
 export const register = (data) => async (dispatch) => {
     const check = valid(data)
-    console.log({ check });
-
     if (check.errLength > 0) return dispatch({ type: GLOBALTYPES.ALERT, payload: check.errMsg })
 
     try {
