@@ -24,9 +24,6 @@ const Search = () => {
             const res = await getDataAPI(`search?username=${search}`, auth.token)
             // req.query.username     seklinde backenden alrq
 
-            console.log({ res });
-
-
             setUsers(res.data.users)
             setLoad(false)
         } catch (err) {
@@ -47,15 +44,8 @@ const Search = () => {
     return (
         <form className="search_form" onSubmit={handleSearch}>
             <input type="text" name="search" style={{ fontSize: "14px", padding: "10px 4px" }} value={search} id="search" title="Enter to Search" onChange={(e) => handleSearching(e)} />
-
             <div className="search_icon" style={{ opacity: search ? 0 : 0.3, top: "60%" }}><span>Enter to Search</span> </div>
-
-            {search && (
-                <div className="close_search" onClick={handleClose} style={{ opacity: users.length === 0 ? 0 : 1, fontSize: "24px", top: "18px" }} >
-                    &times;
-                </div>
-            )}
-
+            {search && (<div className="close_search" onClick={handleClose} style={{ opacity: users.length === 0 ? 0 : 1, fontSize: "24px", top: "18px" }} >  &times; </div>)}
             <button type="submit" style={{ display: 'none' }}>Search</button>
             {load && <img style={{ transform: "translateY(0%)" }} className="loading" src={LoadIcon} alt="loading" />}
             <div className="users"> {search && users?.map(user => (<UserCard key={user._id} user={user} border="border" handleClose={handleClose} />))} </div>
