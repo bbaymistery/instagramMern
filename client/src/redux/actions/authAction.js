@@ -25,7 +25,13 @@ export const refreshToken = () => async (dispatch) => {
     if (firstLogin) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } })
         try {
-            const res = await postDataAPI('refresh_token')
+            //bunu ekledik cunki her reloaddda bizde profile/ape/refresh seklinde
+            //request gonderirdi 
+            const method = "POST"
+            const baseUrl = `http://localhost:3000/api/refresh_token`;
+            const headers = { "Content-Type": "application/json", }
+            const response = await fetch(baseUrl, { method, headers });
+            const res = await response.json();
             dispatch({ type: GLOBALTYPES.AUTH, payload: { token: res?.access_token, user: res?.user } })
             dispatch({ type: GLOBALTYPES.ALERT, payload: {} })
         } catch (err) {

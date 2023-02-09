@@ -19,9 +19,7 @@ const App = () => {
     // biz ligin edennen sonra home page yonelirik
     //Yalniz home page de refresh ederken yeniden logine yonelir
     //onun garsisin almag ucun refresh token kullanirik
-    dispatch(refreshToken())
-
-
+    dispatch(refreshToken("refresh_token "))
   }, [dispatch])
   return (
     <Router>
