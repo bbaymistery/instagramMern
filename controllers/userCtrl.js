@@ -33,6 +33,7 @@ const userCtrl = {
         try {
             const { avatar, fullname, mobile, address, story, website, gender } = req.body
             if (!fullname) return res.status(400).json({ msg: "Please add your full name." })
+            console.log(req.user);
 
             await Users.findOneAndUpdate({ _id: req.user._id }, {
                 avatar, fullname, mobile, address, story, website, gender
@@ -45,6 +46,55 @@ const userCtrl = {
         }
     },
 
+    // req.params._id =>uzerine tikliyoruz follow diye (onun id si )
+    follow: async (req, res) => {
+        try {
+            const user = await Users.find({ _id: req.params.id, followers: req.user._id })
+            if (user.length > 0) return res.status(500).json({ msg: "You followed this user." })
+
+            //izlemek istedigimiz userin followersin icine oz id mizi ekliyoruz
+            const newUser =
+                await Users
+                    .findOneAndUpdate(
+                        { _id: req.params.id },
+                        { $push: { followers: req.user._id } },
+                        { new: true })
+                    .populate("followers following", "-password")
+
+            //ozumuzun following imizin icine  izlemek istedigimizin id sini ekliyoruz
+            await Users
+                .findOneAndUpdate(
+                    { _id: req.user._id },
+                    { $push: { following: req.params.id } },
+                    { new: true })
+
+            res.json({ newUser })
+
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
+    unfollow: async (req, res) => {
+        try {
+            const newUser =
+                await Users
+                    .findOneAndUpdate(
+                        { _id: req.params.id },
+                        { $pull: { followers: req.user._id } },
+                        { new: true })
+                    .populate("followers following", "-password")
+
+            await Users.findOneAndUpdate(
+                { _id: req.user._id },
+                { $pull: { following: req.params.id } },
+                { new: true })
+
+            res.json({ newUser })
+
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
 }
 
 
