@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, useLocation } from 'react-router-dom';
 import Home from './pages/home';
 import Login from './pages/login';
 import Register from './pages/register';
@@ -15,11 +15,17 @@ const App = () => {
   const dispatch = useDispatch()
   const { auth } = useSelector(state => state)
 
+  // console.log(window.pathname);
+
+
   useEffect(() => {
     // biz ligin edennen sonra home page yonelirik
     //Yalniz home page de refresh ederken yeniden logine yonelir
     //onun garsisin almag ucun refresh token kullanirik
     dispatch(refreshToken("refresh_token "))
+
+
+
   }, [dispatch])
   return (
     <Router>
