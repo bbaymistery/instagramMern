@@ -3,11 +3,15 @@ import { useSelector } from 'react-redux'
 import Avatar from '../Avatar'
 import FollowBtn from '../FollowBtn'
 import EditProfile from './EditProfile'
-
+import { GLOBALTYPES } from '../../redux/actions/globalTypes'
+import Followers from './Followers'
+import Following from './Following'
 const Info = ({ id, auth, profile, dispatch }) => {
     const [userData, setUserData] = useState([])
     const { theme } = useSelector(state => state)
     const [onEdit, setOnEdit] = useState(false)
+    const [showFollowers, setShowFollowers] = useState(false)
+    const [showFollowing, setShowFollowing] = useState(false)
     useEffect(() => {
         if (id === auth.user._id) {
             setUserData([auth.user])
@@ -16,7 +20,6 @@ const Info = ({ id, auth, profile, dispatch }) => {
             setUserData(newData)
         }
     }, [id, auth, dispatch, profile.users])
-
 
 
     return (
@@ -32,14 +35,14 @@ const Info = ({ id, auth, profile, dispatch }) => {
                         </div>
 
                         <div className="follow_btn">
-                            <span style={{ fontSize: "13px" }} className="mr-4" >
+                            <span style={{ fontSize: "13px" }} onClick={() => setShowFollowers(true)} className="mr-4" >
                                 {user.followers.length} Followers
                             </span>
-                            <span style={{ fontSize: "13px" }} className="ml-4" >
+                            <span style={{ fontSize: "13px" }} onClick={() => setShowFollowing(true)} className="ml-4" >
                                 {user.following.length} Following
                             </span>
                         </div>
-                        <h6 >{user.fullname} <span className={`${theme ? 'text-success' : 'text-danger'}`}>{user.mobile}</span></h6>
+                        <h6 >{user.fullname} <span  className={`${theme ? 'text-success' : 'text-danger'}`}>{user.mobile}</span></h6>
                         <p style={{ fontSize: "13px" }} className="m-0">{user.address} Qurtulus 93</p>
                         <h6 style={{ fontSize: "13px" }} className="m-0">{user.email}</h6>
                         <a style={{ fontSize: "13px" }} href={`https://www.${user.website}`} target="_blank" rel="noreferrer">
@@ -47,6 +50,9 @@ const Info = ({ id, auth, profile, dispatch }) => {
                         </a>
                         <p style={{ fontSize: "11px" }}>{user.story} </p>
                         {onEdit && <EditProfile setOnEdit={setOnEdit} />}
+
+                        { showFollowers &&  <Followers  users={user.followers}  setShowFollowers={setShowFollowers} />  }
+                        {   showFollowing &&  <Following users={user.following}  setShowFollowing={setShowFollowing} />  }
                     </div>
                 </div>
             ))

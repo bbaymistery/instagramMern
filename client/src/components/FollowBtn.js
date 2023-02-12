@@ -9,39 +9,36 @@ const FollowBtn = ({ user }) => {
     const dispatch = useDispatch()
 
     const [load, setLoad] = useState(false)
+
     //mesela herhansi bir profili arayb uzerine tikladigimizda eger onu izliyorsak
     //follow sozu degisilib followed olar
     useEffect(() => {
-        if (auth.user.following.find(item => item._id === user._id))
-            setFollowed(true)
+        if (auth.user.following.find(item => item._id === user._id)) setFollowed(true)
 
         return () => setFollowed(false)
     }, [auth.user.following, user._id])
 
     const handleFollow = async () => {
+        if (load) return;
+
         setFollowed(true)
-        console.log(profile.users);
-
-        dispatch(follow({ users: profile.users, user, auth }))
-
-        // if (auth.user.following.find(item => item._id === user._id)) {
-        // }
-        // return () => setFollowed(false
+        setLoad(true)
+        await dispatch(follow({ users: profile.users, user, auth, socket }))
+        setLoad(false)
     }
 
     const handleUnFollow = async () => {
-        // if (load) return;
+        if (load) return;
         setFollowed(false)
-        // setLoad(true)
-        console.log(profile.users, { user, auth });
-
-        dispatch(unfollow({ users: profile.users, user, auth }))
-        // setLoad(false)
+        setLoad(true)
+        await dispatch(unfollow({ users: profile.users, user, auth }))
+        setLoad(false)
     }
 
     return (
         <>
-            {followed ? <button className="btn btn-outline-danger" onClick={handleUnFollow}> UnFollow</button>
+            {followed
+                ? <button className="btn btn-outline-danger" onClick={handleUnFollow}> UnFollow</button>
                 : <button className="btn btn-outline-info" onClick={handleFollow}> Follow </button>}
         </>
     )

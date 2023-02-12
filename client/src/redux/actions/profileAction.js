@@ -75,8 +75,18 @@ export const updateProfileUser = ({ userData, avatar, auth }) => async (dispatch
 //yani onun followerslerinde birdene artsin
 export const follow = ({ users, user, auth }) => async (dispatch) => {
     let newUser;
-    newUser = { ...user, followers: [...user.followers, auth.user] }
+    if (users.every(item => item._id !== user._id)) {
+        newUser = { ...user, followers: [...user.followers, auth.user] }
+    } else {
 
+        //burda eger birden cox user var ise o birden coxunun her birin
+        //followersin icine yeni followeri ekliyor
+        users.forEach(item => {
+            if (item._id === user._id) {
+                newUser = { ...item, followers: [...item.followers, auth.user] }
+            }
+        })
+    }
     //!follow tklaninca onun followersinde bir nefer artar
     dispatch({ type: PROFILE_TYPES.FOLLOW, payload: newUser })
 
@@ -89,6 +99,18 @@ export const follow = ({ users, user, auth }) => async (dispatch) => {
         }
     })
 
+    try {
+        const res = await patchDataAPI(`user/${user._id}/follow`, null, auth.token)
+
+        console.log(res, "res");
+
+    } catch (err) {
+        dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: { error: err.response.data.msg }
+        })
+    }
+
 
 }
 
@@ -96,8 +118,13 @@ export const follow = ({ users, user, auth }) => async (dispatch) => {
 
 export const unfollow = ({ users, user, auth }) => async (dispatch) => {
     let newUser;
-    newUser = { ...user, followers: user.followers.filter(item => item._id !== auth.user._id) }
-
+    if (users.every(item => item._id !== user._id)) {
+        newUser = { ...user, followers: user.followers.filter(item => item._id !== auth.user._id) }
+    } else {
+        users.forEach(item => {
+            if (item._id === user._id) newUser = { ...user, followers: user.followers.filter(item => item._id !== auth.user._id) }
+        })
+    }
     // //!unfollow tklaninca onun followersinde bir nefer  aazalar
     dispatch({ type: PROFILE_TYPES.UNFOLLOW, payload: newUser })
 
@@ -109,6 +136,19 @@ export const unfollow = ({ users, user, auth }) => async (dispatch) => {
             user: { ...auth.user, following: auth.user.following.filter((item) => item._id !== newUser._id) }
         }
     })
+
+    try {
+        const res = await patchDataAPI(`user/${user._id}/unfollow`, null, auth.token)
+        console.log("unfiollow,  ", res);
+
+
+
+    } catch (err) {
+        dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: { error: err.response.data.msg }
+        })
+    }
 
 
 }

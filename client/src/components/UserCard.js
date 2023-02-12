@@ -46,8 +46,6 @@ const UserCard = ({ children, user, border, handleClose, setShowFollowers, setSh
                     <div className="ml-2" style={{ transform: 'translateY(-2px)' }}>
                         <span style={{ fontSize: "12px" }} className="d-block">{user.username}</span>
                         <span style={{ fontSize: "12px",marginTop:"10px" }} className="d-block">  {msg ? showMsg(user) : user.fullname}</span>
-
-                    
                     </div>
                 </Link>
             </div>
