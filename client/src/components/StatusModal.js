@@ -1,19 +1,21 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { GLOBALTYPES } from '../redux/actions/globalTypes'
 import Icons from './Icons'
 import { imageShow, videoShow } from '../utils/mediaShow'
-import { createPost, } from '../redux/actions/postAction'
+import { createPost, updatePost } from '../redux/actions/postAction'
+
 
 const StatusModal = () => {
     const videoRef = useRef()
     const refCanvas = useRef()
     const dispatch = useDispatch()
+
     const [images, setImages] = useState([])
     const [tracks, setTracks] = useState('')
     const [content, setContent] = useState('')
     const [stream, setStream] = useState(false)
-    const { auth, theme, } = useSelector(state => state)
+    const { auth, theme, status } = useSelector(state => state)
 
     const handleChangeImages = (e) => {
         const files = [...e.target.files]
@@ -71,7 +73,13 @@ const StatusModal = () => {
         e.preventDefault()
         if (images.length === 0) return dispatch({ type: GLOBALTYPES.ALERT, payload: { error: "Please add your photo." } })
 
-        dispatch(createPost({ content, images, auth }))
+        //degisdi
+        if (status.onEdit) {
+            dispatch(updatePost({ content, images, auth, status }))
+        } else {
+            dispatch(createPost({ content, images, auth, }))
+        }
+
 
         setContent('')
         setImages([])
@@ -79,7 +87,17 @@ const StatusModal = () => {
         if (tracks) tracks.stop()
         dispatch({ type: GLOBALTYPES.STATUS, payload: false })
     }
-
+    //posts(cardHeader   const handleEditPost function )
+    // icerisinde edite tiklayinca
+    //genel hem bir postu hemde onEdit:true gonderirik
+    //asagidaki kod o zmn calisir
+    //Buna gore otomatikmen handleSubmitde degisecek
+    useEffect(() => {
+        if (status.onEdit) {
+            setContent(status.content)
+            setImages(status.images)
+        }
+    }, [status])
     return (
         <div className='status_modal'>
             <form action="" onSubmit={handleSubmit}>
