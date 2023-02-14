@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { refreshToken } from './redux/actions/authAction';
 import Header from './components/header/Header';
 import StatusModal from './components/StatusModal';
+import { getPosts } from './redux/actions/postAction'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -22,6 +23,11 @@ const App = () => {
     //onun garsisin almag ucun refresh token kullanirik
     dispatch(refreshToken("refresh_token "))
   }, [dispatch])
+  useEffect(() => {
+    if (auth.token) {
+      dispatch(getPosts(auth.token))
+    }
+  }, [dispatch, auth.token])
   return (
     <Router>
       <Alert />

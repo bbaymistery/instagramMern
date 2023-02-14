@@ -38,6 +38,8 @@ const StatusModal = () => {
     //ama kodlari yazdikki ilerde lazim olar
     const handleStream = () => {
         setStream(true)
+
+
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then(mediaStream => {
