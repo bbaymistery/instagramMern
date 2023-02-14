@@ -22,6 +22,7 @@ app.use(cookieParser())
 //Route importings
 app.use('/api', require('./routes/authRouter'))
 app.use('/api', require('./routes/userRouter'))
+app.use('/api', require('./routes/postRouter'))
 
 //middleware for error
 app.get("/", (req, res) => {
