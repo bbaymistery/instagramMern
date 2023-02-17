@@ -15,7 +15,7 @@ import { getPosts } from './redux/actions/postAction'
 
 const App = () => {
   const dispatch = useDispatch()
-  const { auth, status } = useSelector(state => state)
+  const { auth, status, modal } = useSelector(state => state)
 
   useEffect(() => {
     // biz ligin edennen sonra home page yonelirik
@@ -34,7 +34,7 @@ const App = () => {
 
       {/* biz burani checked unchecked olunmasini dropdowndaki dark light mor ile degisirik Hansiki burdaki id="theme" ile ordaki label htmlFor "theme" eynidi Fuckk ! */}
       <input type="checkbox" id="theme" />
-      <div className="App">
+      <div className={`App ${(status || modal) && 'mode'}`}>
         <h1 className="main">
           {auth.token && <Header />}
           {status && <StatusModal />}

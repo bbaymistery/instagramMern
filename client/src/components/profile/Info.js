@@ -22,6 +22,15 @@ const Info = ({ id, auth, profile, dispatch }) => {
     }, [id, auth, dispatch, profile.users])
 
 
+    //eger followersin modali ve ya onEditin modali popup olarsa 
+    //otomatikmen Appjsde  status|| modal &&mode     true olur 
+    useEffect(() => {
+        if (showFollowers || showFollowing || onEdit) {
+            dispatch({ type: GLOBALTYPES.MODAL, payload: true })
+        } else {
+            dispatch({ type: GLOBALTYPES.MODAL, payload: false })
+        }
+    }, [showFollowers, showFollowing, onEdit, dispatch])
     return (
         <div className="info">
             {userData.map((user, index) => (
