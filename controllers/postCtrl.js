@@ -20,10 +20,16 @@ const postCtrl = {
     },
     getPosts: async (req, res) => {
         try {
+
+            //get post gelende artig sadece id gelmiyecek direk acilimi seklinde gelecek
             const posts =
                 await Posts.find({ user: [...req.user.following, req.user._id] })
                     .sort("-createdAt")
                     .populate("user likes", "avatar username fullname followers")
+                    .populate({
+                        path: "comments",
+                        populate: { path: "user likes", select: "-password"  }
+                    })
             res.json({ msg: 'Success!', result: posts.length, posts })
         } catch (err) {
             return res.status(500).json({ msg: err.message })

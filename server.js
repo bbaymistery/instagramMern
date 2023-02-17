@@ -3,9 +3,7 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 // const cloudinary = require("cloudinary");
 const express = require("express")
-const dotenv = require("dotenv")
 const cors = require('cors')
-const path = require("path")
 connectDB()
 const app = express()
 const corsOptions = {
@@ -23,7 +21,7 @@ app.use(cookieParser())
 app.use('/api', require('./routes/authRouter'))
 app.use('/api', require('./routes/userRouter'))
 app.use('/api', require('./routes/postRouter'))
-
+app.use('/api', require('./routes/commentRouter'))
 //middleware for error
 app.get("/", (req, res) => {
     res.json({ msg: "dsassss" })
