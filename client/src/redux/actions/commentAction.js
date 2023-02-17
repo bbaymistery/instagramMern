@@ -11,6 +11,8 @@ export const createComment = ({ post, newComment, auth, socket }) => async (disp
     try {
         const data = { ...newComment, postId: post._id, postUserId: post.user._id }
         const res = await postDataAPI('comment', data, auth.token)
+
+        //burda ise commentin icerisinde ki useri degisirik
         const newData = { ...res.newComment, user: auth.user }
         const newPost = { ...post, comments: [...post.comments, newData] }
         dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
@@ -19,4 +21,3 @@ export const createComment = ({ post, newComment, auth, socket }) => async (disp
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
 }
-//25 https://www.youtube.com/watch?v=T7BkGzocAa4&list=PLs4co9a6NhMyAfSnDg1MKGwLdLx0OA07d&index=20
