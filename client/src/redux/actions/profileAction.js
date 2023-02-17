@@ -16,14 +16,21 @@ export const PROFILE_TYPES = {
 
 //get user (ctrl)
 export const getProfileUsers = ({ id, auth }) => async (dispatch) => {
-    // dispatch({ type: PROFILE_TYPES.GET_ID, payload: id })
-
+    dispatch({ type: PROFILE_TYPES.GET_ID, payload: id })
+    //!dikkat Burda hepsi profiletypes olarag gecir
     try {
         dispatch({ type: PROFILE_TYPES.LOADING, payload: true })
+
         const res = getDataAPI(`/user/${id}`, auth.token)
         const users = await res;
         dispatch({ type: PROFILE_TYPES.GET_USER, payload: users.data })
-        // console.log(users, "usrse");
+        console.log({ users });
+
+        const res1 = getDataAPI(`user_posts/${id}`, auth.token)
+        const posts = await res1;
+        dispatch({ type: PROFILE_TYPES.GET_POSTS, payload: { ...posts.data, _id: id, page: 2 } })
+        console.log({ posts });
+
         dispatch({ type: PROFILE_TYPES.LOADING, payload: false })
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })

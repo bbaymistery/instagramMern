@@ -3,7 +3,7 @@ import { PROFILE_TYPES } from '../actions/profileAction'
 
 const initialState = {
     loading: false,
-    ids: [],
+    ids: [],//new
     users: [],
     posts: []
 }
@@ -30,6 +30,8 @@ const profileReducer = (state = initialState, action) => {
                     (user._id === action.payload._id ? action.payload : user)
                 )
             };
+        case PROFILE_TYPES.GET_ID:return { ...state, ids: [...state.ids, action.payload]  };
+        case PROFILE_TYPES.GET_POSTS:  return {  ...state,  posts: [...state.posts, action.payload] };
         default: return state;
     }
 }

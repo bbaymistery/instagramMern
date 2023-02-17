@@ -9,9 +9,9 @@ const CardHeader = ({ post }) => {
     const dispatch = useDispatch()
     const history = useHistory()
 
-    
-    const handleEditPost = () =>  dispatch({ type: GLOBALTYPES.STATUS, payload: { ...post, onEdit: true } })
-    
+
+    const handleEditPost = () => dispatch({ type: GLOBALTYPES.STATUS, payload: { ...post, onEdit: true } })
+
 
     const handleDeletePost = () => {
 
@@ -20,13 +20,14 @@ const CardHeader = ({ post }) => {
     const handleCopyLink = () => {
 
     }
+    console.log({ auth: auth.user._id, post: post.user._id });
 
     return (
         <div className="card_header">
-            <div className="d-flex" style={{gap:'10px'}}>
+            <div className="d-flex" style={{ gap: '10px' }}>
                 <Avatar src={post.user.avatar} size="big-avatar" />
 
-                <div className="card_name" style={{ display: "flex", flexDirection: "column",gap:'.5rem' }}>
+                <div className="card_name" style={{ display: "flex", flexDirection: "column", gap: '.5rem' }}>
                     <h6 className="m-0">
                         <Link to={`/profile/${post.user._id}`} className="text-dark">
                             {post.user.username}

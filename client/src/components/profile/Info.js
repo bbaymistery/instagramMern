@@ -6,6 +6,9 @@ import EditProfile from './EditProfile'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import Followers from './Followers'
 import Following from './Following'
+//daha once auth,profile i   stateden id ni useParamsdan 
+//dispatchi ise normal import ederek getrb .
+//{{ id, auth, profile, dispatch }>BUNLAR eslinde yeni olandi}
 const Info = ({ id, auth, profile, dispatch }) => {
     const [userData, setUserData] = useState([])
     const { theme } = useSelector(state => state)

@@ -9,8 +9,6 @@ const Comments = ({ post }) => {
 
   useEffect(() => {
     const newCm = post.comments.filter(cm => !cm.reply)
-    console.log(post.comments);
-
     setComments(newCm)
     setShowComments(newCm.slice(newCm.length - next))
   }, [post.comments, next])
@@ -18,19 +16,18 @@ const Comments = ({ post }) => {
 
   useEffect(() => {
     const newRep = post.comments.filter(cm => cm.reply)
-    console.log({ newRep });
-
     setReplyComments(newRep)
   }, [post.comments])
 
-  //gecici olarak kapatdik cunki mantk sehfdi tam commentleri goremmirik
-  //showCommments yerine comments ekledik
+  //gecici olarak kapatdik cunki mantk sehfdi tam commentleri goremmirik 
+  //showCommments yerine comments ekledik 
   return (
     <div className='comments'>
       {comments.map((comment, index) => (
-        <CommentDisplay key={index} comment={comment} post={post} replyCm={replyComments.filter(item => item.reply === comment._id)} />
+        <CommentDisplay key={index} comment={comment} post={post}
+          replyCm={replyComments.filter(item => item.reply === comment._id)} />
       ))}
-      {/* // !burdaki  mentig sehfdi commentler cox olanda gosterilmir Bunu sonra oxuyanda iyice arasdir ! */}
+  {/* // !burdaki  mentig sehfdi commentler cox olanda gosterilmir Bunu sonra oxuyanda iyice arasdir ! */}
 
       {comments.length - next > 0 ?
         <div className="p-2 border-top" style={{ cursor: 'pointer', color: 'crimson', fontSize: "13px" }} onClick={() => setNext(next + 10)}>

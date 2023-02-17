@@ -15,8 +15,10 @@ const postReducer = (state = initialState, action) => {
         case POST_TYPES.LOADING_POST:
             return { ...state, loading: action.payload };
         case POST_TYPES.GET_POSTS:
+
             return {
-                ...state, posts: action.payload.posts,
+                ...state,
+                 posts: action.payload.posts,
                 result: action.payload.result,
                 page: action.payload.page
             };
