@@ -13,7 +13,7 @@ const InputComment = ({ children, post, onReply, setOnReply }) => {
     e.preventDefault()
     
     if (!content.trim()) {
-      // if (setOnReply) return setOnReply(false)
+      if (setOnReply) return setOnReply(false)
       return;
     }
     
@@ -22,11 +22,15 @@ const InputComment = ({ children, post, onReply, setOnReply }) => {
     const newComment = {
       content,
       likes: [],
-      user: auth.user,
+      user: auth.user,//kim cvb verirse odur 
       createdAt: new Date().toISOString(),
+      reply: onReply && onReply.commentId,//  hansi commentden sohbet gedirse odur 
+      tag: onReply && onReply.user //burda kime cvb veriremse tag dir 
+
     }
 
     dispatch(createComment({ post, newComment, auth }))
+    if (setOnReply) return setOnReply(false);
 
   }
 

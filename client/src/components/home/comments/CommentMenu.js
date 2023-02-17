@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-// import { deleteComment } from '../../../redux/actions/commentAction'
+import { deleteComment } from '../../../redux/actions/commentAction'
 
 const CommentMenu = ({ post, comment, setOnEdit }) => {
 
@@ -9,7 +9,7 @@ const CommentMenu = ({ post, comment, setOnEdit }) => {
 
   const handleRemove = () => {
     if (post.user._id === auth.user._id || comment.user._id === auth.user._id) {
-      // dispatch(deleteComment({ post, auth, comment, socket }))
+      dispatch(deleteComment({ post, auth, comment, socket }))
     }
   }
 

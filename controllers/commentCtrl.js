@@ -7,7 +7,7 @@ const commentCtrl = {
             const { postId, content, tag, reply, postUserId } = req.body
             const newComment = new Comments({ user: req.user._id, content, tag, reply, postUserId, postId })
             //update post's comment
-            await Posts.findOneAndUpdate({ _id: postId }, { $push: { comments: newComment._id }   }, { new: true })
+            await Posts.findOneAndUpdate({ _id: postId }, { $push: { comments: newComment._id } }, { new: true })
             await newComment.save()
             res.json({ newComment })
         } catch (err) {
@@ -31,8 +31,8 @@ const commentCtrl = {
     likeComment: async (req, res) => {
         try {
             const comment = await Comments.find({ _id: req.params.id, likes: req.user._id })
-            console.log(comment,"comment");
-            
+            console.log(comment, "comment");
+
             if (comment.length > 0) return res.status(400).json({ msg: "You liked this post." })
 
             await Comments.findOneAndUpdate({ _id: req.params.id }, {
@@ -64,17 +64,9 @@ const commentCtrl = {
 
     deleteComment: async (req, res) => {
         try {
-            const comment = await Comments.findOneAndDelete({
-                _id: req.params.id,
-                $or: [
-                    { user: req.user._id },
-                    { postUserId: req.user._id }
-                ]
-            })
+            const comment = await Comments.findOneAndDelete({ _id: req.params.id, $or: [{ user: req.user._id }, { postUserId: req.user._id }] })
 
-            await Posts.findOneAndUpdate({ _id: comment.postId }, {
-                $pull: { comments: req.params.id }
-            })
+            await Posts.findOneAndUpdate({ _id: comment.postId }, { $pull: { comments: req.params.id } })
 
             res.json({ msg: 'Deleted Comment!' })
 
@@ -84,10 +76,3 @@ const commentCtrl = {
     },
 }
 module.exports = commentCtrl
-// const post = await Posts.findById(postId)
-// if (!post) return res.status(400).json({ msg: "This post does not exist." })
-
-// if (reply) {
-//     const cm = await Comments.findById(reply)
-//     if (!cm) return res.status(400).json({ msg: "This comment does not exist." })
-// }

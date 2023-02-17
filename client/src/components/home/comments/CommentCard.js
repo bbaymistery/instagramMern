@@ -7,6 +7,7 @@ import LikeButton from '../../LikeButton'
 import CommentMenu from './CommentMenu'
 import { updateComment, likeComment, unLikeComment } from '../../../redux/actions/commentAction'
 
+import InputComment from '../InputComment';
 
 const CommentCard = ({ children, comment, post, commentId }) => {
     const { auth, theme } = useSelector(state => state)
@@ -15,13 +16,16 @@ const CommentCard = ({ children, comment, post, commentId }) => {
     const [isLike, setIsLike] = useState(false)
     const [loadLike, setLoadLike] = useState(false)
     const [onEdit, setOnEdit] = useState(false)
+    const [onReply, setOnReply] = useState(false)
 
     const dispatch = useDispatch()
 
     //eger like olunubsa direk girmizi olarag geler
     useEffect(() => {
         setContent(comment.content)
-        setIsLike(false)
+        setIsLike(false) //
+        setOnReply(false)//acik komment varsa kapanar Show comments or hide comments edende
+
         if (comment.likes.find(like => like._id === auth.user._id)) {
             setIsLike(true)
         }
@@ -55,6 +59,10 @@ const CommentCard = ({ children, comment, post, commentId }) => {
             setOnEdit(false)
         }
     }
+    const handleReply = () => {
+        if (onReply) return setOnReply(false)
+        setOnReply({ ...comment, commentId })
+    }
 
     //commenti yazb send edende direk gorunur olmuycak birinci
     //bulanti olcak sonr gorunur olcak
@@ -78,6 +86,8 @@ const CommentCard = ({ children, comment, post, commentId }) => {
                     {onEdit ?
                         <textarea rows={"5"} value={content} onChange={(e) => setContent(e.target.value)}></textarea>
                         : <>
+                            {comment.tag && comment.tag._id !== comment.user._id &&
+                                <Link to={`/profile/${comment.tag._id}`} className="mr-1">  @{comment.tag.username}</Link>}
                             <span> {content.length < 100 ? content : readMore ? content + ' ' : content.slice(0, 100) + '....'}   </span>
                             {content.length > 100 && <span className="readMore" onClick={() => setReadMore(!readMore)}>   {readMore ? 'Hide content' : 'Read more'} </span>}
                         </>}
@@ -92,7 +102,7 @@ const CommentCard = ({ children, comment, post, commentId }) => {
                                     <small style={{ fontSize: "14px" }} onClick={handleUpdate} className="font-weight-bold mr-3"> update </small>
                                     <small style={{ fontSize: "14px" }} onClick={e => setOnEdit(false)} className="font-weight-bold mr-3"> cancel </small>
                                 </>
-                                : <small style={{ fontSize: "14px" }} onClick={e => setOnEdit(false)} className="font-weight-bold mr-3"> reply </small>}
+                                : <small style={{ fontSize: "14px" }} onClick={handleReply} className="font-weight-bold mr-3">    {onReply ? 'cancel' : 'reply'} </small>}
                         </small>
                     </div>
                 </div>
@@ -101,6 +111,14 @@ const CommentCard = ({ children, comment, post, commentId }) => {
                     <LikeButton fz={true} isLike={isLike} handleLike={handleLike} handleUnLike={handleUnLike} />
                 </div>
             </div>
+            {onReply &&
+                <InputComment post={post} onReply={onReply} setOnReply={setOnReply} >
+                    <Link style={{ fontSize: "12px" }} to={`/profile/${onReply.user._id}`} className="mr-1">
+                        @{onReply.user.username}:
+                    </Link>
+                </InputComment>}
+
+            {children}
         </div>
     )
 }

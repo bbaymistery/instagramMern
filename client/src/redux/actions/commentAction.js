@@ -36,8 +36,7 @@ export const updateComment = ({ comment, post, content, auth }) => async (dispat
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
 }
-//new comment Comments iyice anlamaya calis Editdata ile falan
-//ne nein icine eklenir falan
+
 export const likeComment = ({ comment, post, auth }) => async (dispatch) => {
 
     //*updating on front side start*************************===>
@@ -58,9 +57,7 @@ export const likeComment = ({ comment, post, auth }) => async (dispatch) => {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
 }
-//new comment Comments iyice anlamaya calis Editdata ile falan
-//ne nein icine eklenir falan
-//23.13 https://www.youtube.com/watch?v=H-FvRMXT9JA&list=PLs4co9a6NhMyAfSnDg1MKGwLdLx0OA07d&index=22
+
 export const unLikeComment = ({ comment, post, auth }) => async (dispatch) => {
 
     const newComment = { ...comment, likes: DeleteData(comment.likes, auth.user._id) }
@@ -78,4 +75,32 @@ export const unLikeComment = ({ comment, post, auth }) => async (dispatch) => {
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
+}
+
+//27.32  https://www.youtube.com/watch?v=IzChpzKBCAY&list=PLs4co9a6NhMyAfSnDg1MKGwLdLx0OA07d&index=24
+export const deleteComment = ({ post, comment, auth, socket }) => async (dispatch) => {
+
+    //biz her reply edende Reply icine comment._id seklinde deger atiyirdik
+    //inputCommente componentine bax
+    //Yani burdada o spesifik commenti tapiriq (butun o post commentlerinin icinnen)
+    const deleteArr = [...post.comments.filter(cm => cm.reply === comment._id), comment]
+
+    const newPost = {
+        ...post,
+        comments: post.comments.filter(cm => !deleteArr.find(da => cm._id === da._id))
+    }
+    // console.log({ post });
+    // console.log({ deleteArr });
+
+    // console.log({ newPost });
+
+    dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
+
+
+    try {
+        deleteArr.forEach(item => { deleteDataAPI(`comment/${item._id}`, auth.token)})
+    } catch (err) {
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+    }
+
 }
