@@ -16,6 +16,10 @@
     color: blue;
     font-weight: 600;
 }
+.comment_input .postBtn:hover {
+  color:rgb(18, 18, 98) ;
+  transition: 0.5s ease;
+}
 .comment_input .dropdown-menu{
     transform: translate3d(-120px, -200px, 0px) !important;
 }
