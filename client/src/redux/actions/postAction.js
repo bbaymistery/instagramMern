@@ -18,7 +18,7 @@ export const createPost = ({ content, images, auth }) => async (dispatch) => {
         const res = await postDataAPI('posts', { content, images: media }, auth.token)
         // console.log(res);
 
-        dispatch({ type: POST_TYPES.CREATE_POST, payload: { ...res.newPost, user: auth.user } })
+        dispatch({ type: POST_TYPES.CREATE_POST,payload: { ...res.newPost, user: auth.user } })
         dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } })
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
@@ -29,7 +29,7 @@ export const getPosts = (token) => async (dispatch) => {
     try {
         dispatch({ type: POST_TYPES.LOADING_POST, payload: true })
         const res = await getDataAPI('posts', token)
-
+        
         dispatch({ type: POST_TYPES.GET_POSTS, payload: { ...res.data, page: 2 } })
         dispatch({ type: POST_TYPES.LOADING_POST, payload: false })
     } catch (err) {
@@ -63,21 +63,21 @@ export const updatePost = ({ content, images, auth, status }) => async (dispatch
     }
 }
 export const likePost = ({ post, auth, socket }) => async (dispatch) => {
-    //updating on front side
+    //updating on front side 
     const newPost = { ...post, likes: [...post.likes, auth.user] }
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
     try {
-        let a = await patchDataAPI(`post/${post._id}/like`, null, auth.token)
-        console.log(a, "likeee");
+       let a= await patchDataAPI(`post/${post._id}/like`, null, auth.token)
+       console.log(a,"likeee");
     } catch (err) {
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+        dispatch({ type: GLOBALTYPES.ALERT,payload: { error: err.response.data.msg } })
     }
 }
 /*
 !CardFotterDeki useEffecti yazmamizin sebebi
 ! front terefde update eidirikki direk girmizi ike isaresi dussun
 
-   Sehfe acilanda eger menim id im karsi terefin
+   Sehfe acilanda eger menim id im karsi terefin 
   postlarinin like nin icinde var ise kirmizi olarak isaretlenir
   useEffect(() => {
     if (post.likes.find(like => like._id === auth.user._id)) {
@@ -88,14 +88,14 @@ export const likePost = ({ post, auth, socket }) => async (dispatch) => {
   }, [post.likes, auth.user._id])
 */
 export const unLikePost = ({ post, auth, socket }) => async (dispatch) => {
-    //updating on front side
+    //updating on front side 
     const newPost = { ...post, likes: post.likes.filter(like => like._id !== auth.user._id) }
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
     try {
-        let res = await patchDataAPI(`post/${post._id}/unlike`, null, auth.token)
-        console.log(res, "inlike");
+        let res=await patchDataAPI(`post/${post._id}/unlike`, null, auth.token)
+        console.log(res,"inlike");
     } catch (err) {
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+        dispatch({type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
 }
 
@@ -103,8 +103,6 @@ export const getPost = ({ detailPost, id, auth }) => async (dispatch) => {
     if (detailPost.every(post => post._id !== id)) {
         try {
             const res = await getDataAPI(`post/${id}`, auth.token)
-    
-
             dispatch({ type: POST_TYPES.GET_POST, payload: res.data.post })
         } catch (err) {
             dispatch({

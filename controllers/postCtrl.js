@@ -2,7 +2,21 @@ const Posts = require('../models/postModel')
 const Comments = require('../models/commentModel')
 const Users = require('../models/userModel')
 
+class APIfeatures {
+    constructor(query, queryString) {
+        this.query = query;
+        this.queryString = queryString;
+    }
 
+    paginating() {
+        const page = this.queryString.page * 1 || 1
+        //burdaki regem degisdikce mesela gelen post sayisida degisiyor   (9  5   3)
+        const limit = this.queryString.limit * 1 || 9
+        const skip = (page - 1) * limit
+        this.query = this.query.skip(skip).limit(limit)
+        return this;
+    }
+}
 
 const postCtrl = {
     createPost: async (req, res) => {
@@ -23,11 +37,19 @@ const postCtrl = {
     getPosts: async (req, res) => {
         try {
             //get post gelende artig sadece id gelmiyecek direk acilimi seklinde gelecek
-            const posts =
-                await Posts.find({ user: [...req.user.following, req.user._id] })
-                    .sort("-createdAt")
-                    .populate("user likes", "avatar username fullname followers")
-                    .populate({ path: "comments", populate: { path: "user likes", select: "-password" } })
+            const features = new APIfeatures(Posts.find({
+                user: [...req.user.following, req.user._id]
+            }), req.query).paginating()
+
+            const posts = await features.query.sort('-createdAt')
+                .populate("user likes", "avatar username fullname followers")
+                .populate({
+                    path: "comments",
+                    populate: {
+                        path: "user likes",
+                        select: "-password"
+                    }
+                })
             res.json({ msg: 'Success!', result: posts.length, posts })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
@@ -83,7 +105,10 @@ const postCtrl = {
     //client da getProfileUsers kullandik
     getUserPosts: async (req, res) => {
         try {
-            const posts = await Posts.find({ user: req.params.id }).sort("-createdAt")
+            const features = 
+            new APIfeatures(Posts.find({ user: req.params.id }), req.query)
+                .paginating()
+            const posts = await features.query.sort("-createdAt")
             res.json({ posts, result: posts.length })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
@@ -97,6 +122,39 @@ const postCtrl = {
 
             if (!post) return res.status(400).json({ msg: 'This post does not exist.' })
             res.json({ post })
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
+    getPostsDicover: async (req, res) => {
+        try {
+            //burda yazilan aggereegate bizde calismadi
+            //ona gore bunu yazdk
+            const features = new APIfeatures(Posts.find({
+                user: [...req.user.following, req.user._id]
+            }), req.query).paginating()
+
+            const posts = await features.query.sort('-createdAt')
+                .populate("user likes", "avatar username fullname followers")
+                .populate({
+                    path: "comments",
+                    populate: {
+                        path: "user likes",
+                        select: "-password"
+                    }
+                })
+
+            return res.json({
+                msg: 'Success!',
+                result: posts.length,
+                posts
+            })
+
+            /*
+            const newArr = [...req.user.following, req.user._id]
+            const num  = req.query.num || 9
+            const posts = await Posts.aggregate([  { $match: { user : { $nin: newArr } } }, { $sample: { size: Number(num) } }, ])
+            */
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
