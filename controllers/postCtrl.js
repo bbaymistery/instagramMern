@@ -105,8 +105,7 @@ const postCtrl = {
     //client da getProfileUsers kullandik
     getUserPosts: async (req, res) => {
         try {
-            const features = 
-            new APIfeatures(Posts.find({ user: req.params.id }), req.query)
+            const features = new APIfeatures(Posts.find({ user: req.params.id }), req.query)
                 .paginating()
             const posts = await features.query.sort("-createdAt")
             res.json({ posts, result: posts.length })
@@ -155,6 +154,17 @@ const postCtrl = {
             const num  = req.query.num || 9
             const posts = await Posts.aggregate([  { $match: { user : { $nin: newArr } } }, { $sample: { size: Number(num) } }, ])
             */
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
+    deletePost: async (req, res) => {
+        try {
+            const post = await Posts.findOneAndDelete({ _id: req.params.id, user: req.user._id })
+            await Comments.deleteMany({ _id: { $in: post.comments } })
+
+            res.json({  msg: 'Deleted Post!',  newPost: { ...post,  user: req.user }  })
+
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }

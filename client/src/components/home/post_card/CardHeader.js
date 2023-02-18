@@ -4,6 +4,8 @@ import { Link, useHistory, } from 'react-router-dom'
 import { GLOBALTYPES } from '../../../redux/actions/globalTypes'
 import { useDispatch, useSelector, } from 'react-redux'
 import moment from 'moment'
+import { deletePost } from '../../../redux/actions/postAction'
+import { BASE_URL } from '../../../utils/config'
 const CardHeader = ({ post }) => {
     const { auth, } = useSelector(state => state)
     const dispatch = useDispatch()
@@ -14,13 +16,16 @@ const CardHeader = ({ post }) => {
 
 
     const handleDeletePost = () => {
-
+        if (window.confirm("Are you sure want to delete this post?")) {
+            dispatch(deletePost({ post, auth,  }))
+            //post details icinde postu delete edende direk home page yonlendirer
+            return history.push("/")
+        }
     }
 
-    const handleCopyLink = () => {
+    const handleCopyLink = () => navigator.clipboard.writeText(`${BASE_URL}/post/${post._id}`)
 
-    }
-    console.log({ auth: auth.user._id, post: post.user._id });
+    
 
     return (
         <div className="card_header">

@@ -3,17 +3,19 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Send from '../../../images/send.svg'
 import { likePost, unLikePost } from '../../../redux/actions/postAction'
+import { BASE_URL } from '../../../utils/config'
 import LikeButton from '../../LikeButton'
+import ShareModal from '../../ShareModal'
 
 const CardFooter = ({ post }) => {
   const [isLike, setIsLike] = useState(false)
   const [loadLike, setLoadLike] = useState(false)
-  // const [isShare, setIsShare] = useState(false)
+  const [isShare, setIsShare] = useState(false)
 
   const [saved, setSaved] = useState(false)
   const { auth, theme } = useSelector(state => state)
   const dispatch = useDispatch()
-  // Sehfe acilanda eger menim id im karsi terefin 
+  // Sehfe acilanda eger menim id im karsi terefin
   //postlarinin like nin icinde var ise kirmizi olarak isaretlenir
   useEffect(() => {
     if (post.likes.find(like => like._id === auth.user._id)) {
@@ -22,10 +24,6 @@ const CardFooter = ({ post }) => {
       setIsLike(false)
     }
   }, [post.likes, auth.user._id])
-
-
-
-
 
   const handleLike = async () => {
     if (loadLike) return;
@@ -37,7 +35,7 @@ const CardFooter = ({ post }) => {
   const handleUnLike = async () => {
     if (loadLike) return;
     setLoadLike(true)
-    await dispatch(unLikePost({ post, auth,  }))
+    await dispatch(unLikePost({ post, auth, }))
     setLoadLike(false)
   }
 
@@ -54,8 +52,7 @@ const CardFooter = ({ post }) => {
         <div style={{ display: "flex", alignItems: "center" }}>
           <LikeButton isLike={isLike} handleLike={handleLike} handleUnLike={handleUnLike} />
           <Link to={`/post/${post?._id}`} className="text-dark">  <i className="far fa-comment" /> </Link>
-        {/*  onClick={() => setIsShare(!isShare)} */}
-          <img style={{ marginTop: '15px' }} src={Send} alt="Send" />
+          <img src={Send} alt="Send" onClick={() => setIsShare(!isShare)} />
         </div>
         {saved ? <i className="fas fa-bookmark text-info" onClick={handleUnSavePost} /> : <i className="far fa-bookmark" onClick={handleSavePost} />}
       </div>
@@ -68,7 +65,7 @@ const CardFooter = ({ post }) => {
           {post?.comments?.length} comments
         </h6>
       </div>
-
+      {isShare && <ShareModal url={`${BASE_URL}/post/${post._id}`} theme={theme} />}
     </div>
   )
 }

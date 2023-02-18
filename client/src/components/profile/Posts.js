@@ -12,8 +12,6 @@ const Posts = ({ id, auth, profile, dispatch }) => {
   const [load, setLoad] = useState(false)
   useEffect(() => {
     profile.posts.forEach(data => {
-      console.log(data);
-
       if (data._id === id) {
         setResult(data.result)
         setPosts(data.posts)
@@ -22,7 +20,6 @@ const Posts = ({ id, auth, profile, dispatch }) => {
       }
     })
   }, [profile.posts, id])
-  console.log(profile);
 
 
   const handleLoadMore = async () => {
