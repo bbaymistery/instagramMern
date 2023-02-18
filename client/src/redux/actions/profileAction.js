@@ -80,7 +80,7 @@ export const updateProfileUser = ({ userData, avatar, auth }) => async (dispatch
 //  ,yanina men useri ekle=> followers: [...user.followers, auth.user]
 //newUser = { ...user, followers: [...user.followers, auth.user] }
 //yani onun followerslerinde birdene artsin
-export const follow = ({ users, user, auth }) => async (dispatch) => {
+export const follow = ({ users, user, auth, socket }) => async (dispatch) => {
     let newUser;
     if (users.every(item => item._id !== user._id)) {
         newUser = { ...user, followers: [...user.followers, auth.user] }
@@ -108,8 +108,8 @@ export const follow = ({ users, user, auth }) => async (dispatch) => {
 
     try {
         const res = await patchDataAPI(`user/${user._id}/follow`, null, auth.token)
+        socket.emit('follow', res.data.newUser)
 
-        console.log(res, "res");
 
     } catch (err) {
         dispatch({
@@ -123,7 +123,7 @@ export const follow = ({ users, user, auth }) => async (dispatch) => {
 
 
 
-export const unfollow = ({ users, user, auth }) => async (dispatch) => {
+export const unfollow = ({ users, user, auth, socket }) => async (dispatch) => {
     let newUser;
     if (users.every(item => item._id !== user._id)) {
         newUser = { ...user, followers: user.followers.filter(item => item._id !== auth.user._id) }
@@ -146,10 +146,7 @@ export const unfollow = ({ users, user, auth }) => async (dispatch) => {
 
     try {
         const res = await patchDataAPI(`user/${user._id}/unfollow`, null, auth.token)
-        console.log("unfiollow,  ", res);
-
-
-
+        socket.emit('unFollow', res.data.newUser)
     } catch (err) {
         dispatch({
             type: GLOBALTYPES.ALERT,

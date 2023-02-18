@@ -6,30 +6,30 @@ import Icons from '../Icons'
 const InputComment = ({ children, post, onReply, setOnReply }) => {
   const [content, setContent] = useState('')
 
-  const { auth, theme } = useSelector(state => state)
+  const { auth, theme, socket } = useSelector(state => state)
   const dispatch = useDispatch()
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     if (!content.trim()) {
       if (setOnReply) return setOnReply(false)
       return;
     }
-    
+
     setContent('')
-    // commentCtrl da tag ve repllayda var ama simdilik gondermiyoruz 
+    // commentCtrl da tag ve repllayda var ama simdilik gondermiyoruz
     const newComment = {
       content,
       likes: [],
-      user: auth.user,//kim cvb verirse odur 
+      user: auth.user,//kim cvb verirse odur
       createdAt: new Date().toISOString(),
-      reply: onReply && onReply.commentId,//  hansi commentden sohbet gedirse odur 
-      tag: onReply && onReply.user //burda kime cvb veriremse tag dir 
+      reply: onReply && onReply.commentId,//  hansi commentden sohbet gedirse odur
+      tag: onReply && onReply.user //burda kime cvb veriremse tag dir
 
     }
 
-    dispatch(createComment({ post, newComment, auth }))
+    dispatch(createComment({ post, newComment, auth, socket }))
     if (setOnReply) return setOnReply(false);
 
   }

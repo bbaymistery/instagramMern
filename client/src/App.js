@@ -13,7 +13,11 @@ import Header from './components/header/Header';
 import StatusModal from './components/StatusModal';
 import { getPosts } from './redux/actions/postAction'
 import { getSuggestions } from './redux/actions/suggestionsAction';
+import SocketClient from './SocketClient'
 
+
+import io from 'socket.io-client'
+import { GLOBALTYPES } from './redux/actions/globalTypes';
 const App = () => {
   const dispatch = useDispatch()
   const { auth, status, modal } = useSelector(state => state)
@@ -23,6 +27,10 @@ const App = () => {
     //Yalniz home page de refresh ederken yeniden logine yonelir
     //onun garsisin almag ucun refresh token kullanirik
     dispatch(refreshToken("refresh_token "))
+
+    const socket = io()
+    dispatch({ type: GLOBALTYPES.SOCKET, payload: socket })
+    return () => socket.close()
   }, [dispatch])
   useEffect(() => {
     if (auth.token) {
@@ -41,6 +49,7 @@ const App = () => {
         <h1 className="main">
           {auth.token && <Header />}
           {status && <StatusModal />}
+          {auth.token && <SocketClient />}
           <Route exact path="/" component={auth?.token ? Home : Login} />
           <Route exact path="/register" component={Register} />
           <PrivateRouter exact path="/:page" component={PageRender} />

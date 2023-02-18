@@ -66,9 +66,22 @@ export const likePost = ({ post, auth, socket }) => async (dispatch) => {
     //updating on front side
     const newPost = { ...post, likes: [...post.likes, auth.user] }
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
+
+    socket.emit('likePost', newPost)
     try {
-        let a = await patchDataAPI(`post/${post._id}/like`, null, auth.token)
-        console.log(a, "likeee");
+        await patchDataAPI(`post/${post._id}/like`, null, auth.token)
+        // Notify
+        const msg = {
+            id: auth.user._id,
+            text: 'like your post.',
+            recipients: [post.user._id],
+            url: `/post/${post._id}`,
+            content: post.content,
+            image: post.images[0].url
+        }
+
+        // dispatch(createNotify({ msg, auth, socket }))
+        
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
@@ -91,9 +104,18 @@ export const unLikePost = ({ post, auth, socket }) => async (dispatch) => {
     //updating on front side
     const newPost = { ...post, likes: post.likes.filter(like => like._id !== auth.user._id) }
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
+
+    socket.emit('unLikePost', newPost)
     try {
-        let res = await patchDataAPI(`post/${post._id}/unlike`, null, auth.token)
-        console.log(res, "inlike");
+      await patchDataAPI(`post/${post._id}/unlike`, null, auth.token)
+        // Notify
+        const msg = {
+            id: auth.user._id,
+            text: 'like your post.',
+            recipients: [post.user._id],
+            url: `/post/${post._id}`,
+        }
+        // dispatch(removeNotify({ msg, auth, socket }))
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }

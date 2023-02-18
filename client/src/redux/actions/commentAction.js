@@ -8,6 +8,7 @@ export const createComment = ({ post, newComment, auth, socket }) => async (disp
     const newPost = { ...post, comments: [...post.comments, newComment] }
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
 
+
     try {
         const data = { ...newComment, postId: post._id, postUserId: post.user._id }
         const res = await postDataAPI('comment', data, auth.token)
@@ -16,7 +17,8 @@ export const createComment = ({ post, newComment, auth, socket }) => async (disp
         const newData = { ...res.newComment, user: auth.user }
         const newPost = { ...post, comments: [...post.comments, newData] }
         dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
-
+        // Socket
+        socket.emit('createComment', newPost)
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
@@ -95,7 +97,7 @@ export const deleteComment = ({ post, comment, auth, socket }) => async (dispatc
     // console.log({ newPost });
 
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
-
+    socket.emit('deleteComment', newPost)
 
     try {
         deleteArr.forEach(item => { deleteDataAPI(`comment/${item._id}`, auth.token)})
