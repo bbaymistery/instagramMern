@@ -41,6 +41,31 @@ const App = () => {
 
     }
   }, [dispatch, auth.token])
+
+
+  //!bunu bura ekledik sonra socketClientde asagidakini yazdik 
+  /*
+   if (notify.sound) audioRef.current.play()
+      spawnNotification(
+        msg.user.username + ' ' + msg.text,
+        msg.user.avatar,
+        msg.url,
+        'V-NETWORK'
+      )
+  */
+  //ve bununlada mesela men post paylasanda ve basga userde onu like edende mene notification duser
+      useEffect(() => {
+    if (!("Notification" in window)) {
+      alert("This browser does not support desktop notification");
+    }
+    else if (Notification.permission === "granted") { }
+    else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(function (permission) {
+        if (permission === "granted") { }
+      });
+    }
+  }, [])
+
   return (
     <Router>
       <Alert />

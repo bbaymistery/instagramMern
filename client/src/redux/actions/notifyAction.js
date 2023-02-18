@@ -44,3 +44,24 @@ export const getNotifies = (token) => async (dispatch) => {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
 }
+
+
+export const isReadNotify = ({ msg, auth }) => async (dispatch) => {
+    //update on front side 
+    dispatch({ type: NOTIFY_TYPES.UPDATE_NOTIFY, payload: { ...msg, isRead: true } })
+    try {
+        //on back side
+        await patchDataAPI(`/isReadNotify/${msg._id}`, null, auth.token)
+    } catch (err) {
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+    }
+}
+
+export const deleteAllNotifies = (token) => async (dispatch) => {
+    dispatch({ type: NOTIFY_TYPES.DELETE_ALL_NOTIFIES, payload: [] })
+    try {
+        await deleteDataAPI('deleteAllNotify', token)
+    } catch (err) {
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+    }
+}

@@ -5,20 +5,26 @@ import { Link } from 'react-router-dom'
 import Avatar from './Avatar'
 import moment from 'moment'
 // import { isReadNotify, NOTIFY_TYPES, deleteAllNotifies } from '../redux/actions/notifyAction'
-import { NOTIFY_TYPES } from '../redux/actions/notifyAction'
+import { deleteAllNotifies, isReadNotify, NOTIFY_TYPES } from '../redux/actions/notifyAction'
 
 const NotifyModal = () => {
     const { auth, notify } = useSelector(state => state)
     const dispatch = useDispatch()
 
-    const handleIsRead = (msg) => {
-    }
+    const handleIsRead = (msg) => dispatch(isReadNotify({ msg, auth }))
 
-    const handleSound = () => {
-    }
+
+    const handleSound = () => dispatch({ type: NOTIFY_TYPES.UPDATE_SOUND, payload: !notify.sound })
+
 
     const handleDeleteAll = () => {
-      
+        const newArr = notify.data.filter(item => item.isRead === false)
+        //eger isRead false olanlarin sayisi sifirdisa otomatikmen tikliyanda hepsini delte eder
+        if (newArr.length === 0) return dispatch(deleteAllNotifies(auth.token))
+
+        let message = `You have ${newArr.length} unread notices. Are you sure you want to delete all?`
+        if (window.confirm(message)) return dispatch(deleteAllNotifies(auth.token))
+
     }
 
     return (
