@@ -19,6 +19,23 @@ const messageReducer = (state = initialState, action) => {
                 };
             }
             return state;
+        //payload = {sender: auth.user._id,recipient: id,text,media: newArr,createdAt: new Date().toISOString() }
+        case MESS_TYPES.ADD_MESSAGE:
+            return {
+                ...state,
+                data: [...state.data, action.payload],
+                users: state.users.map(user =>
+                    user._id === action.payload.recipient || user._id === action.payload.sender
+                        ? {
+                            ...user,
+                            text: action.payload.text,
+                            media: action.payload.media,
+                            call: action.payload.call
+                        }
+                        : user
+                )
+            };
+  
 
         default:
             return state;
