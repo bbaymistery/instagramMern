@@ -1,21 +1,22 @@
-import React, { useEffect, } from 'react'
+import React, { useEffect, useState, } from 'react'
 
 import Info from '../../components/profile/Info'
 
 import { useSelector, useDispatch } from 'react-redux'
 import LoadIcon from '../../images/loading.gif'
-import { getProfileUsers } from '../../redux/actions/profileAction'//!
-import { useParams } from 'react-router-dom'//!
+import { getProfileUsers } from '../../redux/actions/profileAction'
+import { useParams } from 'react-router-dom'
 import Posts from '../../components/profile/Posts'
+import Saved from '../../components/profile/Saved'
 
-//*NIda li olanlar Tutorialda eslinde bu bolum eklenilib
-//*bundan once burda gormusense demeli onceden copy past edibsen
+
 const Profile = () => {
     const { profile, auth } = useSelector(state => state)
-    const dispatch = useDispatch()//!
-    const { id } = useParams()//!
-//this id is user id
-    //!auth
+    const dispatch = useDispatch()
+    //this id is user id
+    const { id } = useParams()
+    const [saveTab, setSaveTab] = useState(false)
+
     useEffect(() => {
         //ilk serefirnde oz profilimi getirer eger oz profilime tiklarsa
         //yada basga profil secersem baskasin getirer
@@ -26,12 +27,17 @@ const Profile = () => {
 
     return (
         <div className="profile">
+            <Info auth={auth} profile={profile} dispatch={dispatch} id={id} />
+
+            {auth.user._id === id &&
+                <div className="profile_tab">
+                    <button className={saveTab ? '' : 'active'} onClick={() => setSaveTab(false)}>Posts</button>
+                    <button className={saveTab ? 'active' : ''} onClick={() => setSaveTab(true)}>Saved</button>
+                </div>}
+
             {profile.loading
-                ? <img className='d-block mx-auto my-4' alt="s" src={LoadIcon} />
-                : <Info auth={auth} profile={profile} dispatch={dispatch} id={id} />}
-
-
-            <Posts auth={auth} profile={profile} dispatch={dispatch} id={id} />
+                ? <img className="d-block mx-auto" src={LoadIcon} alt="loading" />
+                : <>{saveTab ? <Saved auth={auth} dispatch={dispatch} /> : <Posts auth={auth} profile={profile} dispatch={dispatch} id={id} />}</>}
         </div>
     )
 }

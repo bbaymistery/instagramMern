@@ -2,19 +2,22 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Send from '../../../images/send.svg'
-import { likePost, unLikePost } from '../../../redux/actions/postAction'
+import { likePost, unLikePost, savePost, unSavePost } from '../../../redux/actions/postAction'
 import { BASE_URL } from '../../../utils/config'
 import LikeButton from '../../LikeButton'
 import ShareModal from '../../ShareModal'
 
 const CardFooter = ({ post }) => {
+  const dispatch = useDispatch()
   const [isLike, setIsLike] = useState(false)
   const [loadLike, setLoadLike] = useState(false)
   const [isShare, setIsShare] = useState(false)
 
-  const [saved, setSaved] = useState(false)
   const { auth, theme } = useSelector(state => state)
-  const dispatch = useDispatch()
+  const [saved, setSaved] = useState(false)
+  const [saveLoad, setSaveLoad] = useState(false)
+
+
   // Sehfe acilanda eger menim id im karsi terefin
   //postlarinin like nin icinde var ise kirmizi olarak isaretlenir
   useEffect(() => {
@@ -25,6 +28,15 @@ const CardFooter = ({ post }) => {
     }
   }, [post.likes, auth.user._id])
 
+
+  // Saved
+  useEffect(() => {
+    if (auth.user.saved.find(id => id === post._id)) {
+      setSaved(true)
+    } else {
+      setSaved(false)
+    }
+  }, [auth.user.saved, post._id])
   const handleLike = async () => {
     if (loadLike) return;
     setLoadLike(true)
@@ -39,12 +51,22 @@ const CardFooter = ({ post }) => {
     setLoadLike(false)
   }
 
-  const handleUnSavePost = (par) => {
+  const handleSavePost = async () => {
+    if (saveLoad) return;
 
+    setSaveLoad(true)
+    await dispatch(savePost({ post, auth }))
+    setSaveLoad(false)
   }
-  const handleSavePost = (par) => {
 
+  const handleUnSavePost = async () => {
+    if (saveLoad) return;
+
+    setSaveLoad(true)
+    await dispatch(unSavePost({ post, auth }))
+    setSaveLoad(false)
   }
+
 
   return (
     <div className='card_footer'>

@@ -100,7 +100,6 @@ const userCtrl = {
         try {
             //who am i following
             const newArr = [...req.user.following, req.user._id]
-            console.log(req.user);
 
             const num = req.query.num || 10
 
