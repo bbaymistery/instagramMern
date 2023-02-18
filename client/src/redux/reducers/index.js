@@ -8,7 +8,7 @@ import homePosts from './postReducer'
 import modal from './modalReducer'
 import detailPost from './detailPostReducer'
 import discover from './discoverReducer'
-// import suggestions from './suggestionsReducer'
+import suggestions from './suggestionsReducer'
 // import socket from './socketReducer'
 // import notify from './notifyReducer'
 // import message from './messageReducer'
@@ -27,7 +27,7 @@ export default combineReducers({
     modal,
     detailPost,
     discover,
-    // suggestions,
+    suggestions,
     // socket,
     // notify,
     // message,

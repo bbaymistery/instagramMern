@@ -3,6 +3,7 @@ import Status from '../components/home/Status'
 import Posts from '../components/home/Posts'
 import { useSelector } from 'react-redux'
 import LoadIcon from '../images/loading.gif'
+import RightSideBar from '../components/home/RightSideBar'
 let scroll = 0;
 const Home = () => {
   const { homePosts } = useSelector(state => state)
@@ -27,6 +28,7 @@ const Home = () => {
           (homePosts.result === 0 && homePosts.posts.length === 0) ? <h2 className="text-center">No Post</h2> : <Posts />}
       </div>
       <div className="col-md-4">
+        <RightSideBar/>
       </div>
     </div>
   )
