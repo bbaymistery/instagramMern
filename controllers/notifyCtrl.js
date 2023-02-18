@@ -30,6 +30,41 @@ const notifyCtrl = {
             return res.status(500).json({ msg: err.message })
         }
     },
+    getNotifies: async (req, res) => {
+        try {
+            const notifies =
+                await Notifies
+                    .find({ recipients: req.user._id })
+                    .sort('-createdAt')
+                    .populate('user', 'avatar username')
+            console.log(req.user._id    );
+
+            /*
+                biz front terefde her defe post yaradanda  createPost functioni ile Ordan notify a bunu gonderirik
+                   const msg = {
+                    id: res.newPost._id,
+                    text: 'added a new post.',
+                   
+                    recipients: res.newPost.user.followers,  => meni izleyenler  =>recipients
+                    url: `/post/${res.newPost._id}`,
+                    content,
+                    image: media[0].url
+                }
+        
+        ve meni izleyenler recipients icine eklenilir 
+        Garsi terefde eger meni izliyirse ve login edib seyfeye girirse o zaman ona notification geder 
+
+        /Cunki    .find({ recipients: req.user._id })  bunu yuxarda ayzarag deyirikki Eger menim aydim recipient icinde varsa o postlari ve ya likelari getir 
+        
+        
+        ve belece front terefde header(menu ) icinde notifications.length seklinde gorsenir
+                */
+
+            return res.json({ notifies })
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
 }
 
 module.exports = notifyCtrl

@@ -50,7 +50,7 @@ const SocketClient = () => {
     return () => socket.off('unFollowToClient')
   }, [socket, dispatch, auth])
   return (
-    <div>SocketClient</div>
+    <div></div>
   )
 }
 
