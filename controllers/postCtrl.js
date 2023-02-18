@@ -162,7 +162,19 @@ const postCtrl = {
         try {
             const post = await Posts.findOneAndDelete({ _id: req.params.id, user: req.user._id })
             await Comments.deleteMany({ _id: { $in: post.comments } })
+//newPost: { ...post, user: req.user }  => bunu notify yazmag ucun kullanirik 
+//hemcinin create post icindekide eynisiile Front icinde notifyda kullaniriz
+/*
+front terefde 
 
+postacationd eletePost 
+        const msg = {
+            id: post._id,
+            text: 'added a new post.',
+            recipients: res.data.newPost.user.followers,
+            url: `/post/${post._id}`,
+        }
+*/
             res.json({ msg: 'Deleted Post!', newPost: { ...post, user: req.user } })
 
         } catch (err) {

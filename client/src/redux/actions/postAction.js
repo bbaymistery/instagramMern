@@ -1,6 +1,7 @@
 import { GLOBALTYPES } from "./globalTypes"
 import { imageUpload } from '../../utils/imageUpload'
 import { deleteDataAPI, getDataAPI, patchDataAPI, postDataAPI, } from '../../utils/fetchData'
+import { createNotify, removeNotify } from './notifyAction'
 
 export const POST_TYPES = {
     CREATE_POST: 'CREATE_POST',
@@ -10,18 +11,31 @@ export const POST_TYPES = {
     GET_POST: 'GET_POST',
     DELETE_POST: 'DELETE_POST'
 }
-export const createPost = ({ content, images, auth }) => async (dispatch) => {
+export const createPost = ({ content, images, auth, socket }) => async (dispatch) => {
     let media = []
     try {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } })
         if (images.length > 0) media = await imageUpload(images)
         const res = await postDataAPI('posts', { content, images: media }, auth.token)
-        // console.log(res);
 
         dispatch({ type: POST_TYPES.CREATE_POST, payload: { ...res.newPost, user: auth.user } })
         dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: false } })
+
+
+        // Notify
+        const msg = {
+            id: res.newPost._id,
+            text: 'added a new post.',
+            //meni izleyenler  =>recipients
+            recipients: res.newPost.user.followers,
+            url: `/post/${res.newPost._id}`,
+            content,
+            image: media[0].url
+        }
+
+        dispatch(createNotify({ msg, auth, socket }))
     } catch (err) {
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { err } })
     }
 }
 
@@ -81,7 +95,7 @@ export const likePost = ({ post, auth, socket }) => async (dispatch) => {
         }
 
         // dispatch(createNotify({ msg, auth, socket }))
-        
+
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
@@ -107,7 +121,7 @@ export const unLikePost = ({ post, auth, socket }) => async (dispatch) => {
 
     socket.emit('unLikePost', newPost)
     try {
-      await patchDataAPI(`post/${post._id}/unlike`, null, auth.token)
+        await patchDataAPI(`post/${post._id}/unlike`, null, auth.token)
         // Notify
         const msg = {
             id: auth.user._id,
@@ -138,8 +152,16 @@ export const deletePost = ({ post, auth, socket }) => async (dispatch) => {
     dispatch({ type: POST_TYPES.DELETE_POST, payload: post })
     try {
         const res = await deleteDataAPI(`post/${post._id}`, auth.token)
+        // Notify
+        const msg = {
+            id: post._id,
+            text: 'deleted one post.',
+            recipients: res.data.newPost.user.followers,
+            url: `/post/${post._id}`,
+        }
+        dispatch(removeNotify({ msg, auth, socket }))
     } catch (err) {
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { err } })
     }
 }
 
@@ -159,6 +181,6 @@ export const unSavePost = ({ post, auth }) => async (dispatch) => {
     try {
         await patchDataAPI(`unSavePost/${post._id}`, null, auth.token)
     } catch (err) {
-        dispatch({  type: GLOBALTYPES.ALERT,  payload: { error: err.response.data.msg }  })
+        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }
 }

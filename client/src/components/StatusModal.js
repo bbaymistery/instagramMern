@@ -15,7 +15,7 @@ const StatusModal = () => {
     const [tracks, setTracks] = useState('')
     const [content, setContent] = useState('')
     const [stream, setStream] = useState(false)
-    const { auth, theme, status } = useSelector(state => state)
+    const { auth, theme, status, socket } = useSelector(state => state)
 
     const handleChangeImages = (e) => {
         const files = [...e.target.files]
@@ -77,7 +77,7 @@ const StatusModal = () => {
         if (status.onEdit) {
             dispatch(updatePost({ content, images, auth, status }))
         } else {
-            dispatch(createPost({ content, images, auth, }))
+            dispatch(createPost({ content, images, auth, socket }))
         }
 
 
