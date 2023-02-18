@@ -13,14 +13,11 @@ export const NOTIFY_TYPES = {
 export const createNotify = ({ msg, auth, socket }) => async (dispatch) => {
     try {
         const res = await postDataAPI('notify', msg, auth.token)
+        console.log(res);
 
-        // socket.emit('createNotify', {
-        //     ...res.data.notify,
-        //     user: {
-        //         username: auth.user.username,
-        //         avatar: auth.user.avatar
-        //     }
-        // })
+        //bunu yazdkdan sonra socketServer.js e yazirig
+        //(ordaki msg olan) => ...res.data.notify, user: username: auth.user.username,avatar: auth.user.avatar
+        socket.emit('createNotify', { ...res.notify, user: { username: auth.user.username, avatar: auth.user.avatar } })
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { err } })
     }
@@ -30,7 +27,7 @@ export const removeNotify = ({ msg, auth, socket }) => async (dispatch) => {
     try {
         await deleteDataAPI(`notify/${msg.id}?url=${msg.url}`, auth.token)
 
-        // socket.emit('removeNotify', msg)
+        socket.emit('removeNotify', msg)
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { err } })
     }
@@ -39,11 +36,10 @@ export const removeNotify = ({ msg, auth, socket }) => async (dispatch) => {
 export const getNotifies = (token) => async (dispatch) => {
     try {
         const res = await getDataAPI('notifies', token)
-        console.log(res);
 
         dispatch({ type: NOTIFY_TYPES.GET_NOTIFIES, payload: res.data.notifies })
 
-    
+
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }

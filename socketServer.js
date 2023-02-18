@@ -70,6 +70,29 @@ const SocketServer = (socket) => {
         user && socket.to(`${user.socketId}`).emit('unFollowToClient', newUser)
     })
 
+    //1.dispatch(createPost({ content, images, auth, socket }))
+    //2. dispatch(createNotify({ msg, auth, socket }))
+    //3. createNotifIcinde
+    //3.1 => socket.emit('createNotify', { ...res.notify, user: { username: auth.user.username, avatar: auth.user.avatar } })
+    //4. socket.on('createNotify', msg => {backend}
+    //5.  socket.on('createNotifyToClient', msg => {client}
+    //6.inside createNotifyToClient=> CREATE_NOTIFY reducer
+    //?Notification
+    socket.on('createNotify', msg => {
+        const clients = users.filter(user => msg.recipients.includes(user.id))
+
+        if (clients.length > 0) {
+            clients.forEach(client => socket.to(`${client.socketId}`).emit('createNotifyToClient', msg))
+        }
+    })
+
+
+    socket.on('removeNotify', msg => {
+
+        const client = users.find(user => msg.recipients.includes(user.id))
+        client && socket.to(`${client.socketId}`).emit('removeNotifyToClient', msg)
+
+    })
 }
 
 module.exports = SocketServer

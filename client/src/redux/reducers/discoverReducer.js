@@ -16,7 +16,6 @@ const discoverReducer = (state = initialState, action) => {
                 loading: action.payload
             };
         case DISCOVER_TYPES.GET_POSTS: {
-            console.log(action.payload);
 
             return {
                 ...state,

@@ -94,7 +94,7 @@ export const likePost = ({ post, auth, socket }) => async (dispatch) => {
             image: post.images[0].url
         }
 
-        // dispatch(createNotify({ msg, auth, socket }))
+        dispatch(createNotify({ msg, auth, socket }))
 
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
@@ -129,7 +129,7 @@ export const unLikePost = ({ post, auth, socket }) => async (dispatch) => {
             recipients: [post.user._id],
             url: `/post/${post._id}`,
         }
-        // dispatch(removeNotify({ msg, auth, socket }))
+        dispatch(removeNotify({ msg, auth, socket }))
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }

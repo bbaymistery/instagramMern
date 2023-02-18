@@ -1,12 +1,24 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { GLOBALTYPES } from "./redux/actions/globalTypes"
+import { NOTIFY_TYPES } from "./redux/actions/notifyAction"
 import { POST_TYPES } from "./redux/actions/postAction"
+const spawnNotification = (body, icon, url, title) => {
+  let options = { body, icon }
+  let n = new Notification(title, options)
+
+  n.onclick = e => {
+    e.preventDefault()
+    window.open(url, '_blank')
+  }
+}
 
 
 const SocketClient = () => {
   const { auth, socket, notify, online, call } = useSelector(state => state)
   const dispatch = useDispatch()
+  const audioRef = useRef()
+
   // joinUser
   useEffect(() => socket.emit('joinUser', auth.user), [socket, auth.user])
 
@@ -49,6 +61,21 @@ const SocketClient = () => {
     socket.on('unFollowToClient', newUser => dispatch({ type: GLOBALTYPES.AUTH, payload: { ...auth, user: newUser } }))
     return () => socket.off('unFollowToClient')
   }, [socket, dispatch, auth])
+
+
+  //!Notification
+  useEffect(() => {
+    socket.on('createNotifyToClient', msg => {
+      dispatch({ type: NOTIFY_TYPES.CREATE_NOTIFY, payload: msg })
+    })
+
+    return () => socket.off('createNotifyToClient')
+  }, [socket, dispatch,])
+
+  useEffect(() => {
+    socket.on('removeNotifyToClient', msg => dispatch({ type: NOTIFY_TYPES.REMOVE_NOTIFY, payload: msg }))
+    return () => socket.off('removeNotifyToClient')
+  }, [socket, dispatch])
   return (
     <div></div>
   )

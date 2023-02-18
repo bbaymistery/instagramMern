@@ -38,7 +38,6 @@ const commentCtrl = {
     likeComment: async (req, res) => {
         try {
             const comment = await Comments.find({ _id: req.params.id, likes: req.user._id })
-            console.log(comment, "comment");
 
             if (comment.length > 0) return res.status(400).json({ msg: "You liked this post." })
 

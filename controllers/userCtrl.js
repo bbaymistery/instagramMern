@@ -33,7 +33,6 @@ const userCtrl = {
         try {
             const { avatar, fullname, mobile, address, story, website, gender } = req.body
             if (!fullname) return res.status(400).json({ msg: "Please add your full name." })
-            console.log(req.user);
 
             await Users.findOneAndUpdate({ _id: req.user._id }, {
                 avatar, fullname, mobile, address, story, website, gender

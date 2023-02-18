@@ -1,6 +1,7 @@
 import { GLOBALTYPES, EditData, DeleteData } from './globalTypes'
 import { POST_TYPES } from './postAction'
 import { postDataAPI, patchDataAPI, deleteDataAPI } from '../../utils/fetchData'
+import { createNotify, removeNotify } from './notifyAction'
 
 
 export const createComment = ({ post, newComment, auth, socket }) => async (dispatch) => {
@@ -19,8 +20,20 @@ export const createComment = ({ post, newComment, auth, socket }) => async (disp
         dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
         // Socket
         socket.emit('createComment', newPost)
+        // Notify
+        const msg = {
+            id: res.newComment._id,
+            text: newComment.reply ? 'mentioned you in a comment.' : 'has commented on your post.',
+            recipients: newComment.reply ? [newComment.tag._id] : [post.user._id],
+            url: `/post/${post._id}`,
+            content: post.content,
+            image: post.images[0].url
+        }
+
+        dispatch(createNotify({ msg, auth, socket }))
     } catch (err) {
-        dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
+        console.log(err);
+
     }
 }
 
@@ -32,7 +45,6 @@ export const updateComment = ({ comment, post, content, auth }) => async (dispat
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
     try {
         let res = await patchDataAPI(`comment/${comment._id}`, { content }, auth.token)
-        // console.log(res);
 
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
@@ -72,7 +84,6 @@ export const unLikeComment = ({ comment, post, auth }) => async (dispatch) => {
 
     try {
         let res = await patchDataAPI(`comment/${comment._id}/unlike`, null, auth.token)
-        // console.log(res);
 
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
@@ -91,16 +102,25 @@ export const deleteComment = ({ post, comment, auth, socket }) => async (dispatc
         ...post,
         comments: post.comments.filter(cm => !deleteArr.find(da => cm._id === da._id))
     }
-    // console.log({ post });
-    // console.log({ deleteArr });
 
-    // console.log({ newPost });
 
     dispatch({ type: POST_TYPES.UPDATE_POST, payload: newPost })
     socket.emit('deleteComment', newPost)
 
     try {
-        deleteArr.forEach(item => { deleteDataAPI(`comment/${item._id}`, auth.token)})
+        deleteArr.forEach(item => {
+            deleteDataAPI(`comment/${item._id}`, auth.token)
+
+            const msg = {
+                id: item._id,
+                text: comment.reply ? 'mentioned you in a comment.' : 'has commented on your post.',
+                recipients: comment.reply ? [comment.tag._id] : [post.user._id],//!buraya tekrar bax
+                //yani niye comment.tag._id   bunu yazb hardan gelir ve s .
+                url: `/post/${post._id}`,
+            }
+
+            dispatch(removeNotify({ msg, auth, socket }))
+        })
     } catch (err) {
         dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err.response.data.msg } })
     }

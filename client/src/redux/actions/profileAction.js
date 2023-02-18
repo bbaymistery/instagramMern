@@ -3,6 +3,7 @@ import { getDataAPI } from '../../utils/fetchData'
 import { imageUpload } from '../../utils/imageUpload'
 
 import { patchDataAPI } from '../../utils/fetchData'
+import { createNotify, removeNotify } from './notifyAction'
 
 export const PROFILE_TYPES = {
     LOADING: 'LOADING_PROFILE',
@@ -24,12 +25,10 @@ export const getProfileUsers = ({ id, auth }) => async (dispatch) => {
         const res = getDataAPI(`/user/${id}`, auth.token)
         const users = await res;
         dispatch({ type: PROFILE_TYPES.GET_USER, payload: users.data })
-        console.log({ users });
 
         const res1 = getDataAPI(`/user_posts/${id}`, auth.token)
         const posts = await res1;
         dispatch({ type: PROFILE_TYPES.GET_POSTS, payload: { ...posts.data, _id: id, page: 2 } })
-        console.log({ posts });
 
         dispatch({ type: PROFILE_TYPES.LOADING, payload: false })
     } catch (err) {
@@ -52,7 +51,6 @@ export const updateProfileUser = ({ userData, avatar, auth }) => async (dispatch
 
         let data = { ...userData, avatar: avatar ? media[0].url : auth.user.avatar }
         const res = await patchDataAPI("user", data, auth.token)
-        console.log(res, "updateProfileUser");
 
         dispatch({
             type: GLOBALTYPES.AUTH,
@@ -109,7 +107,15 @@ export const follow = ({ users, user, auth, socket }) => async (dispatch) => {
     try {
         const res = await patchDataAPI(`user/${user._id}/follow`, null, auth.token)
         socket.emit('follow', res.data.newUser)
+        // Notify
+        const msg = {
+            id: auth.user._id,
+            text: 'has started to follow you.',
+            recipients: [newUser._id],
+            url: `/profile/${auth.user._id}`,
+        }
 
+        dispatch(createNotify({ msg, auth, socket }))
 
     } catch (err) {
         dispatch({
@@ -147,6 +153,15 @@ export const unfollow = ({ users, user, auth, socket }) => async (dispatch) => {
     try {
         const res = await patchDataAPI(`user/${user._id}/unfollow`, null, auth.token)
         socket.emit('unFollow', res.data.newUser)
+        // Notify
+        const msg = {
+            id: auth.user._id,
+            text: 'has started to follow you.',
+            recipients: [newUser._id],
+            url: `/profile/${auth.user._id}`,
+        }
+
+        dispatch(removeNotify({ msg, auth, socket }))
     } catch (err) {
         dispatch({
             type: GLOBALTYPES.ALERT,

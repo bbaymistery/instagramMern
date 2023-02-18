@@ -36,8 +36,7 @@ const notifyCtrl = {
                 await Notifies
                     .find({ recipients: req.user._id })
                     .sort('-createdAt')
-                    .populate('user', 'avatar username')
-            console.log(req.user._id    );
+                    .populate('user', 'avatar username')//user objectIdsiin avatar ve usernamini getir
 
             /*
                 biz front terefde her defe post yaradanda  createPost functioni ile Ordan notify a bunu gonderirik
