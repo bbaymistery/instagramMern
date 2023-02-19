@@ -24,20 +24,29 @@ export const getDataAPI = async (url, token) => {
             const datas = await response.json();
 */
 export const postDataAPI = async (url, data, token = "") => {
+
     const method = "POST"
     const baseUrl = `api/${url}`;
     const headers = { "Content-Type": "application/json", "Authorization": token }
+    console.log(typeof data);
 
     if (typeof data === 'object') {
         const body = JSON.stringify({ ...data })
         const response = await fetch(baseUrl, { method, body, headers });
         const datas = await response.json();
+        console.log({ url, data, token, datas });
+
         return datas;
     } else {
         const response = await fetch(baseUrl, { method, headers });
         const datas = await response.json();
+
+        console.log("calisdimmmm");
+
         return datas;
     }
+
+
 }
 
 export const putDataAPI = async (url, post, token) => {

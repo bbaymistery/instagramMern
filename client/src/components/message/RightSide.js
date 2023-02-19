@@ -8,7 +8,7 @@ import { imageUpload } from '../../utils/imageUpload'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import Icons from '../Icons'
 import { imageShow, videoShow } from '../../utils/mediaShow'
-import { addMessage } from '../../redux/actions/messageAction'
+import { addMessage, getMessages } from '../../redux/actions/messageAction'
 import LoadIcon from '../../images/loading.gif'
 
 const RightSide = () => {
@@ -52,11 +52,12 @@ const RightSide = () => {
 
     const msg = {
       sender: auth.user._id,
-      recipient: id,
+      recipient: id,//recipient mesaji gonderdigimiz wexs
       text,
       media: newArr,
       createdAt: new Date().toISOString()
     }
+    console.log(msg);
 
     setLoadMedia(false)
     await dispatch(addMessage({ msg, auth, socket }))
@@ -81,6 +82,15 @@ const RightSide = () => {
 
     }
   }, [message.data, id])
+
+  useEffect(() => {
+    const getMessagesData = async () => {
+      await dispatch(getMessages({ auth, id }))
+    }
+    getMessagesData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, ])
+  
   return (
     <>
       <div className="message_header" style={{ cursor: 'pointer' }}>
@@ -102,9 +112,10 @@ const RightSide = () => {
 
                 {msg.sender === auth.user._id &&
                   <div className="chat_row you_message">
+                    {/* setDATA YANINDAKI DATA NI BURDA KULLANDK */}
                     <MsgDisplay user={auth.user} msg={msg} theme={theme} data={data} />
                   </div>}
-                  {/* //message send tikliyannan sonra asagud a loading olar  */}
+                {/* //message send tikliyannan sonra asagud a loading olar  */}
                 {loadMedia && <div className="chat_row you_message"> <img src={LoadIcon} alt="loading" /> </div>}
               </div>))}
 

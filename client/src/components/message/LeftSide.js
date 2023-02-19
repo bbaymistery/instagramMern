@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getDataAPI } from '../../utils/fetchData'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import { useHistory, useParams } from 'react-router-dom'
-import { MESS_TYPES } from '../../redux/actions/messageAction'
+import { getConversations, MESS_TYPES } from '../../redux/actions/messageAction'
 
 
 const LeftSide = () => {
@@ -47,7 +47,10 @@ const LeftSide = () => {
         return ''
     }
 
-
+    useEffect(() => {
+        if (message.firstLoad) return;
+        dispatch(getConversations({ auth }))
+    }, [dispatch, auth, message.firstLoad])
 
     return (
         <>
