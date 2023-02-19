@@ -16,7 +16,7 @@ export const MESS_TYPES = {
 
 export const addMessage = ({ msg, auth, socket }) => async (dispatch) => {
     dispatch({ type: MESS_TYPES.ADD_MESSAGE, payload: msg })
-
+    socket.emit("addMessage", msg)
     try {
         const res = await axios.post(`/api/message`, msg, {
             headers: { Authorization: auth.token }
@@ -53,7 +53,7 @@ export const getConversations = ({ auth, page = 1 }) => async (dispatch) => {
                 }
             })
         })
-//get messagesin client tarafina bak
+
         dispatch({ type: MESS_TYPES.GET_CONVERSATIONS, payload: { newArr, result: res.data.result } })
 
     } catch (err) {

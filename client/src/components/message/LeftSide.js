@@ -17,6 +17,7 @@ const LeftSide = () => {
     const history = useHistory()
     const { id } = useParams()
     const pageEnd = useRef()
+    const [page, setPage] = useState(0)
 
     const handleSearch = async (e) => {
         //headerdeki gibi
@@ -51,7 +52,26 @@ const LeftSide = () => {
         if (message.firstLoad) return;
         dispatch(getConversations({ auth }))
     }, [dispatch, auth, message.firstLoad])
+    // Load More
+    useEffect(() => {
 
+        //her yuxari scrolladigimizda 9tane mesaj geler
+        const observer = new IntersectionObserver(entries => {
+
+            if (entries[0].isIntersecting) {
+                setPage(p => p + 1)
+            }
+        }, { threshold: 0.1 })
+
+        observer.observe(pageEnd.current)
+    }, [setPage])
+    // Load More
+    useEffect(() => {
+        //her yuxari scrolladigimizda 9tane user geler
+        if (message.resultUsers >= (page - 1) * (9) && page > 1) {
+            dispatch(getConversations({ auth, page }))
+        }
+    }, [message.resultUsers, auth, dispatch, page])
     return (
         <>
             <form className="message_header" onSubmit={handleSearch} >

@@ -8,7 +8,7 @@ import { imageUpload } from '../../utils/imageUpload'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
 import Icons from '../Icons'
 import { imageShow, videoShow } from '../../utils/mediaShow'
-import { addMessage, getMessages } from '../../redux/actions/messageAction'
+import { addMessage, getMessages, MESS_TYPES } from '../../redux/actions/messageAction'
 import LoadIcon from '../../images/loading.gif'
 
 const RightSide = () => {
@@ -23,8 +23,10 @@ const RightSide = () => {
   const [data, setData] = useState([])
 
   const refDisplay = useRef()
+  const pageEnd = useRef()
 
-
+  const [page, setPage] = useState(0)
+  const [isLoadMore, setIsLoadMore] = useState(0)
 
   //same as StatusModa;
   const handleChangeMedia = (e) => {
@@ -57,10 +59,11 @@ const RightSide = () => {
       media: newArr,
       createdAt: new Date().toISOString()
     }
-    console.log(msg);
 
     setLoadMedia(false)
+    //await yazrqki bu islem tamamlansn sonra o birine gecsin
     await dispatch(addMessage({ msg, auth, socket }))
+    //mesaj gonderilennen sonra asagiya scrollasin
     if (refDisplay.current) refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
 
   }
@@ -72,25 +75,70 @@ const RightSide = () => {
   }
   useEffect(() => {
     const newUser = message.users.find(user => user._id === id)
-    if (newUser) setUser(newUser)
+    if (newUser) {
+      setUser(newUser)
+    }
 
   }, [message.users, id])
+
   useEffect(() => {
-    const newData = message.data.find(item => item._id === id)
+    // const newData = message.data.find(item => item._id === id)
+    const newData = message.data.filter(item => item.sender === id || item.sender === auth.user._id)
+
     if (newData) {
-      setData(newData.messages)
+      setData(newData)
 
     }
-  }, [message.data, id])
+  }, [message.data, id, auth.user._id])
 
   useEffect(() => {
     const getMessagesData = async () => {
+      //enter searchin altinda userler gelennen sonra her bir user arasinda gecit
+      // edende ilk bos sehfe gorsensin deye asagidakini yazdk
+      dispatch({ type: MESS_TYPES.GET_MESSAGES, payload: { messages: [] } })
+      setPage(1) //niye ? 
       await dispatch(getMessages({ auth, id }))
+      if (refDisplay.current) {
+        //gecit edende asagiya scollasin(sagdaki mesaj kutusu)
+        setTimeout(() => {
+
+          refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+        }, 50)
+      }
     }
     getMessagesData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, ])
-  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id,])
+  // Load More
+  useEffect(() => {
+
+    //her yuxari scrolladigimizda 9tane mesaj geler
+    const observer = new IntersectionObserver(entries => {
+
+      if (entries[0].isIntersecting) {
+        console.log("calisiyorum 1");
+        setPage(p => p + 1)
+
+      }
+    }, { threshold: 0.1 })
+
+    observer.observe(pageEnd.current)
+  }, [setPage])
+  // Load More
+  useEffect(() => {
+    //her yuxari scrolladigimizda 9tane mesaj geler
+
+    if (message.resultData >= (page - 1) * (9) && page > 1) {
+      dispatch(getMessages({ auth, id, page }))
+    }
+  }, [message.resultData, auth, dispatch, id, page])
+
+
+  //yazi yazmaya basloyanda asgi scrollasin
+  useEffect(() => {
+    if (refDisplay.current) refDisplay.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
+
+  }, [text])
   return (
     <>
       <div className="message_header" style={{ cursor: 'pointer' }}>
@@ -99,11 +147,16 @@ const RightSide = () => {
         </UserCard>}
       </div>
 
-      <div className="chat_container" ref={refDisplay}>
-        <div className="chat_display">
+      <div className="chat_container">
+        <div className="chat_display" ref={refDisplay}>
+
+          <button style={{ marginTop: '-25px', opacity: 0 }} ref={pageEnd}>
+            Load more
+          </button>
+
           {/* messaglarin gorunmesi o ve men */}
           {
-            message.data.map((msg, index) => (
+            data.map((msg, index) => (
               <div key={index}>
                 {msg.sender !== auth.user._id &&
                   <div className="chat_row other_message">
